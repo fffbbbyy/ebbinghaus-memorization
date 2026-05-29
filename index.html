@@ -1893,7 +1893,6 @@ body::after {
     <div class="music-tabs">
       <span class="music-tab active" data-tab="ambient">氛围音效</span>
       <span class="music-tab" data-tab="local">本地文件</span>
-      <span class="music-tab" data-tab="netease">在线歌单</span>
     </div>
 
     <!-- Ambient tab -->
@@ -1940,22 +1939,6 @@ body::after {
 
       <!-- Playlist -->
       <div class="music-playlist" id="localPlaylist"></div>
-    </div>
-
-    <!-- NetEase tab -->
-    <div class="music-panel" id="panelNetease" style="display:none;">
-      <p style="font-size:12px;color:var(--faded-ink);margin-bottom:8px;">
-        输入网易云歌单或歌曲 ID（从网页版 URL 中获取）
-      </p>
-      <div class="music-row">
-        <select id="neteaseType" class="music-select" style="width:auto;">
-          <option value="0">歌单</option>
-          <option value="2">单曲</option>
-        </select>
-        <input type="text" id="neteaseId" class="music-input" placeholder="歌单/歌曲 ID" style="flex:1;">
-        <button class="btn btn-outline btn-sm" id="btnLoadNetease">加载</button>
-      </div>
-      <div id="neteasePlayer" style="margin-top:10px;"></div>
     </div>
   </div>
 </div>
@@ -2494,7 +2477,6 @@ function onMusicTabSwitch(tab) {
   var panel = tab.dataset.tab;
   document.getElementById('panelAmbient').style.display = panel === 'ambient' ? '' : 'none';
   document.getElementById('panelLocal').style.display = panel === 'local' ? '' : 'none';
-  document.getElementById('panelNetease').style.display = panel === 'netease' ? '' : 'none';
 }
 
 function onAmbientTypeChange() {
@@ -2531,18 +2513,6 @@ function updateMusicCollapsedText() {
   var labels = { none: '静音', rain: '雨声', white: '白噪音', fire: '篝火' };
   var t = type ? type.value : 'none';
   el.textContent = '🎵 ' + (labels[t] || '背景音乐');
-}
-
-function onLoadNetease() {
-  var container = document.getElementById('neteasePlayer');
-  var id = document.getElementById('neteaseId').value.trim();
-  var type = document.getElementById('neteaseType').value;
-  if (!id) { container.innerHTML = '<p style="color:var(--red-ink);font-size:11px;">请输入 ID</p>'; return; }
-  container.innerHTML =
-    '<iframe style="width:100%;height:' + (type === '0' ? '380' : '80') + 'px;" ' +
-    'src="//music.163.com/outchain/player?type=' + type + '&id=' + id + '&auto=0&height=' + (type === '0' ? '380' : '66') + '" ' +
-    'frameborder="0" onerror="this.style.display=\'none\'"></iframe>' +
-    '<p style="font-size:10px;color:var(--ink-faint);margin-top:4px;">若无法加载，请尝试用服务器方式打开页面，或使用氛围音效/本地文件</p>';
 }
 
 // ── Restore ambient state on page load ─────────────────────
@@ -3693,8 +3663,6 @@ function init() {
   document.getElementById('localVolume').addEventListener('input', function() {
     document.getElementById('musicAudio').volume = parseInt(this.value) / 100;
   });
-  // NetEase
-  document.getElementById('btnLoadNetease').addEventListener('click', onLoadNetease);
   // Restore state
   restoreMusicState();
   restoreLocalFiles();
