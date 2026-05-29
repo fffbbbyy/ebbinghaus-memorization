@@ -2226,16 +2226,88 @@ function startAmbient(type, volume) {
   }
 }
 
+// ── IndexedDB Audio Store ──────────────────────────────────
+const AUDIO_DB_NAME = 'ebbinghaus_audio';
+const AUDIO_STORE = 'files';
+let audioDB = null;
+
+function openAudioDB() {
+  return new Promise(function(resolve, reject) {
+    if (audioDB) { resolve(audioDB); return; }
+    var req = indexedDB.open(AUDIO_DB_NAME, 1);
+    req.onupgradeneeded = function(e) {
+      var db = e.target.result;
+      if (!db.objectStoreNames.contains(AUDIO_STORE)) {
+        db.createObjectStore(AUDIO_STORE, { keyPath: 'id' });
+      }
+    };
+    req.onsuccess = function(e) { audioDB = e.target.result; resolve(audioDB); };
+    req.onerror = function(e) { reject(e); };
+  });
+}
+
+function saveAudioBlob(id, name, size, blob) {
+  return openAudioDB().then(function(db) {
+    return new Promise(function(resolve, reject) {
+      var tx = db.transaction(AUDIO_STORE, 'readwrite');
+      tx.objectStore(AUDIO_STORE).put({ id: id, name: name, size: size, blob: blob });
+      tx.oncomplete = resolve;
+      tx.onerror = reject;
+    });
+  });
+}
+
+function deleteAudioBlob(id) {
+  return openAudioDB().then(function(db) {
+    return new Promise(function(resolve, reject) {
+      var tx = db.transaction(AUDIO_STORE, 'readwrite');
+      tx.objectStore(AUDIO_STORE).delete(id);
+      tx.oncomplete = resolve;
+      tx.onerror = reject;
+    });
+  });
+}
+
+function loadAllAudioBlobs() {
+  return openAudioDB().then(function(db) {
+    return new Promise(function(resolve, reject) {
+      var tx = db.transaction(AUDIO_STORE, 'readonly');
+      var req = tx.objectStore(AUDIO_STORE).getAll();
+      req.onsuccess = function() { resolve(req.result || []); };
+      req.onerror = reject;
+    });
+  });
+}
+
 // ── Local File Player ──────────────────────────────────────
-let localAudioFiles = [];
+const LOCAL_PLAYLIST_KEY = 'ebbinghaus_local_playlist';
+let localAudioFiles = [];  // { id, name, size, blob }
 let localCurrentIdx = -1;
+let localPlaylistMeta = [];  // [{ id, name, size }] — persisted to localStorage
+
+function persistPlaylistMeta() {
+  localPlaylistMeta = localAudioFiles.map(function(f) {
+    return { id: f.id, name: f.name, size: f.size };
+  });
+  try { localStorage.setItem(LOCAL_PLAYLIST_KEY, JSON.stringify(localPlaylistMeta)); }
+  catch(e) {}
+}
+
+function loadPlaylistMeta() {
+  try {
+    var raw = localStorage.getItem(LOCAL_PLAYLIST_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch(e) { return []; }
+}
 
 function addLocalFiles(fileList) {
-  const newFiles = Array.from(fileList).filter(function(f) {
+  var newFiles = Array.from(fileList).filter(function(f) {
     return f.type.startsWith('audio/') || /\.(mp3|wav|flac|ogg|aac|m4a)$/i.test(f.name);
   });
   if (newFiles.length === 0) return;
-  // Append new files, avoid exact duplicates by name+size
+
+  // Deduplicate by name+size
+  var toAdd = [];
   for (var i = 0; i < newFiles.length; i++) {
     var dup = false;
     for (var j = 0; j < localAudioFiles.length; j++) {
@@ -2243,13 +2315,33 @@ function addLocalFiles(fileList) {
         dup = true; break;
       }
     }
-    if (!dup) localAudioFiles.push(newFiles[i]);
+    if (!dup) toAdd.push(newFiles[i]);
   }
-  if (localCurrentIdx < 0) localCurrentIdx = 0;
-  document.getElementById('localPlayer').style.display = localAudioFiles.length > 0 ? '' : 'none';
-  renderLocalPlaylist();
-  if (localCurrentIdx === 0 && localAudioFiles.length > 0) {
-    playLocalFile(0);
+  if (toAdd.length === 0) return;
+
+  // Save to IndexedDB
+  var saved = 0;
+  for (var k = 0; k < toAdd.length; k++) {
+    (function(file) {
+      var id = Date.now() + '_' + k;
+      saveAudioBlob(id, file.name, file.size, file).then(function() {
+        localAudioFiles.push({ id: id, name: file.name, size: file.size, blob: file });
+        saved++;
+        if (saved === toAdd.length) finishAdd();
+      });
+    })(toAdd[k]);
+  }
+
+  function finishAdd() {
+    // Sort by name for consistent order
+    localAudioFiles.sort(function(a, b) { return a.name.localeCompare(b.name); });
+    if (localCurrentIdx < 0) localCurrentIdx = 0;
+    persistPlaylistMeta();
+    document.getElementById('localPlayer').style.display = localAudioFiles.length > 0 ? '' : 'none';
+    renderLocalPlaylist();
+    if (localCurrentIdx === 0 && localAudioFiles.length > 0) {
+      playLocalFile(0);
+    }
   }
 }
 
@@ -2311,9 +2403,16 @@ function playPrev() {
 function removeFromPlaylist(idx, e) {
   if (e) { e.stopPropagation(); e.preventDefault(); }
   if (idx < 0 || idx >= localAudioFiles.length) return;
+  var removed = localAudioFiles[idx];
   var wasPlaying = idx === localCurrentIdx;
   var audio = document.getElementById('musicAudio');
+
+  // Delete from IndexedDB
+  deleteAudioBlob(removed.id).catch(function() {});
+
   localAudioFiles.splice(idx, 1);
+  persistPlaylistMeta();
+
   if (localAudioFiles.length === 0) {
     localCurrentIdx = -1;
     audio.pause();
@@ -2456,6 +2555,35 @@ function restoreMusicState() {
   ambientVolume = state.volume || 0.4;
   updateMusicCollapsedText();
   // Only auto-start if user selects — browser policy prevents auto-play
+}
+
+function restoreLocalFiles() {
+  var meta = loadPlaylistMeta();
+  if (meta.length === 0) return;
+  loadAllAudioBlobs().then(function(records) {
+    // Match records to metadata by id
+    var recMap = {};
+    records.forEach(function(r) { recMap[r.id] = r; });
+    localAudioFiles = [];
+    for (var i = 0; i < meta.length; i++) {
+      var rec = recMap[meta[i].id];
+      if (rec && rec.blob) {
+        // Reconstruct a File object from the stored blob
+        var file = new File([rec.blob], rec.name, { type: rec.blob.type || 'audio/mpeg' });
+        localAudioFiles.push({ id: rec.id, name: rec.name, size: rec.size, blob: file });
+      }
+    }
+    if (localAudioFiles.length > 0) {
+      localCurrentIdx = 0;
+      document.getElementById('localPlayer').style.display = '';
+      renderLocalPlaylist();
+      // Don't auto-play — browser policy requires user gesture
+      updateLocalNowPlaying();
+      document.getElementById('localNowPlaying').textContent = localAudioFiles[0].name + ' (就绪)';
+    }
+  }).catch(function() {
+    // IndexedDB may not be available
+  });
 }
 
 function fireStamp() {
@@ -3565,6 +3693,7 @@ function init() {
   document.getElementById('btnLoadNetease').addEventListener('click', onLoadNetease);
   // Restore state
   restoreMusicState();
+  restoreLocalFiles();
 
   document.getElementById('btnNotify').addEventListener('click', onToggleNotify);
   document.getElementById('notifyTime').addEventListener('change', function() {
