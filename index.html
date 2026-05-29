@@ -1544,6 +1544,168 @@ body::after {
   font-size: 14px;
 }
 
+/* ── Music Card — Phonograph Parlor ──────────────────────── */
+.music-card { display: none; }
+.music-card.open { display: block; }
+.music-card .music-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 22px;
+  cursor: pointer;
+  user-select: none;
+  background: rgba(255,255,255,0.2);
+  border-bottom: 1px solid transparent;
+  transition: all 0.2s;
+}
+.music-card.open .music-header {
+  border-bottom-color: rgba(125,94,16,0.15);
+}
+.music-card .music-header:hover {
+  background: rgba(255,255,255,0.4);
+}
+.music-collapsed-text {
+  font-family: "Crimson Text", "Noto Serif SC", serif;
+  font-size: 14px;
+  color: var(--faded-ink);
+  font-style: italic;
+}
+.music-toggle {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  color: var(--faded-ink);
+  letter-spacing: 1px;
+}
+.music-body {
+  display: none;
+  padding: 14px 22px;
+}
+.music-card.open .music-body { display: block; }
+
+/* Tabs */
+.music-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid rgba(125,94,16,0.15);
+  padding-bottom: 2px;
+}
+.music-tab {
+  font-family: "JetBrains Mono", "Crimson Text", monospace;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--faded-ink);
+  padding: 6px 14px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-bottom: none;
+  border-radius: 2px 2px 0 0;
+  letter-spacing: 1px;
+  transition: all 0.18s;
+}
+.music-tab:hover { color: var(--iron-gall-ink); background: rgba(255,255,255,0.3); }
+.music-tab.active {
+  color: var(--iron-gall-ink);
+  background: rgba(255,255,255,0.5);
+  border-color: rgba(125,94,16,0.2);
+  border-bottom: 2px solid var(--brass-polished);
+}
+
+/* Panels */
+.music-panel { display: block; }
+.music-row {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+}
+.music-row label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  color: var(--faded-ink);
+  min-width: 45px;
+  letter-spacing: 0.5px;
+}
+.music-select {
+  padding: 5px 10px;
+  border: 1px solid rgba(125,94,16,0.3);
+  border-radius: 1px;
+  font-size: 12px;
+  font-family: "Crimson Text", "JetBrains Mono", serif;
+  background: rgba(255,255,255,0.45);
+  color: var(--iron-gall-ink);
+}
+.music-slider {
+  flex: 1; height: 5px;
+  -webkit-appearance: none; appearance: none;
+  background: linear-gradient(90deg, rgba(35,107,66,0.3), rgba(35,107,66,0.5));
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+}
+.music-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #d44, #8b1a1a);
+  border: 1px solid rgba(125,94,16,0.4);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  cursor: pointer;
+}
+.music-input {
+  padding: 5px 10px;
+  border: 1px solid rgba(125,94,16,0.3);
+  border-radius: 1px;
+  font-size: 12px;
+  font-family: "JetBrains Mono", monospace;
+  background: rgba(255,255,255,0.45);
+  color: var(--iron-gall-ink);
+  width: 150px;
+}
+
+/* Drop zone */
+.music-dropzone {
+  border: 2px dashed rgba(125,94,16,0.25);
+  border-radius: 2px;
+  padding: 24px;
+  text-align: center;
+  color: var(--faded-ink);
+  font-family: "Crimson Text", serif;
+  font-size: 14px;
+  margin-bottom: 10px;
+  transition: all 0.2s;
+  background: rgba(255,255,255,0.2);
+}
+.music-dropzone.dragover {
+  border-color: var(--brass-polished);
+  background: rgba(163,120,10,0.08);
+  color: var(--iron-gall-ink);
+}
+.music-playlist {
+  margin-top: 8px;
+  max-height: 120px;
+  overflow-y: auto;
+  font-family: "Crimson Text", serif;
+  font-size: 13px;
+  color: var(--iron-gall-ink);
+}
+.music-playlist div {
+  padding: 4px 8px;
+  cursor: pointer;
+  border-radius: 1px;
+  transition: background 0.15s;
+}
+.music-playlist div:hover { background: rgba(163,120,10,0.06); }
+.music-playlist div.active {
+  color: var(--vermillion-ink);
+  font-weight: 600;
+}
+.music-now-playing {
+  font-family: "Crimson Text", serif;
+  font-size: 12px;
+  color: var(--bottle-green);
+  font-style: italic;
+  padding: 4px 0;
+  min-height: 20px;
+}
+
 /* ── Reduced Motion — Accessibility ────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -1635,6 +1797,66 @@ body::after {
   </div>
   <span style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--faded-ink);" id="statTime"></span>
 </div>
+
+<div class="card music-card" id="musicCard" style="display:none;">
+  <div class="music-header" id="musicHeader">
+    <span class="music-collapsed-text" id="musicCollapsedText">🎵 背景音乐</span>
+    <span class="music-toggle">展开</span>
+  </div>
+  <div class="music-body" id="musicBody">
+    <div class="music-tabs">
+      <span class="music-tab active" data-tab="ambient">氛围音效</span>
+      <span class="music-tab" data-tab="local">本地文件</span>
+      <span class="music-tab" data-tab="netease">在线歌单</span>
+    </div>
+
+    <!-- Ambient tab -->
+    <div class="music-panel" id="panelAmbient">
+      <div class="music-row">
+        <label>音效：</label>
+        <select id="ambientType" class="music-select">
+          <option value="none">静音</option>
+          <option value="rain">雨声</option>
+          <option value="white">白噪音</option>
+          <option value="fire">篝火</option>
+        </select>
+      </div>
+      <div class="music-row">
+        <label>音量：</label>
+        <input type="range" id="ambientVolume" class="music-slider" min="0" max="100" value="40">
+      </div>
+    </div>
+
+    <!-- Local files tab -->
+    <div class="music-panel" id="panelLocal" style="display:none;">
+      <div class="music-dropzone" id="musicDropzone">
+        拖放音频文件到此处<br><small>支持 MP3 / WAV / FLAC / OGG</small>
+      </div>
+      <input type="file" id="musicFileInput" accept="audio/*" multiple style="display:none;">
+      <button class="btn btn-outline btn-sm" id="btnBrowseFiles">浏览文件...</button>
+      <div class="music-now-playing" id="localNowPlaying">未在播放</div>
+      <div class="music-playlist" id="localPlaylist"></div>
+    </div>
+
+    <!-- NetEase tab -->
+    <div class="music-panel" id="panelNetease" style="display:none;">
+      <p style="font-size:12px;color:var(--faded-ink);margin-bottom:8px;">
+        输入网易云歌单或歌曲 ID（从网页版 URL 中获取）
+      </p>
+      <div class="music-row">
+        <select id="neteaseType" class="music-select" style="width:auto;">
+          <option value="0">歌单</option>
+          <option value="2">单曲</option>
+        </select>
+        <input type="text" id="neteaseId" class="music-input" placeholder="歌单/歌曲 ID" style="flex:1;">
+        <button class="btn btn-outline btn-sm" id="btnLoadNetease">加载</button>
+      </div>
+      <div id="neteasePlayer" style="margin-top:10px;"></div>
+    </div>
+  </div>
+</div>
+
+<audio id="musicAudio" style="display:none;"></audio>
 
 <div class="card" id="tableCard" style="display:none;">
   <div class="table-wrap" id="tableWrap">
@@ -1729,9 +1951,21 @@ function toast(msg) {
   el._t = setTimeout(() => el.classList.remove('show'), 2200);
 }
 
+// ── Shared AudioContext singleton ─────────────────────────
+let _audioCtx = null;
+function getAudioContext() {
+  if (!_audioCtx) {
+    _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (_audioCtx.state === 'suspended') {
+    _audioCtx.resume();
+  }
+  return _audioCtx;
+}
+
 function playStampSound() {
   try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const ctx = getAudioContext();
     const now = ctx.currentTime;
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
@@ -1756,6 +1990,279 @@ function playStampSound() {
     osc2.start(now);
     osc2.stop(now + 0.12);
   } catch(e) { /* audio not available */ }
+}
+
+// ── Ambient Sound Engine ───────────────────────────────────
+const AMBIENT_STORAGE = 'ebbinghaus_ambient';
+let ambientType = 'none';
+let ambientVolume = 0.4;
+let ambientNodes = null;
+
+function loadAmbientState() {
+  try {
+    const raw = localStorage.getItem(AMBIENT_STORAGE);
+    return raw ? JSON.parse(raw) : { type: 'none', volume: 0.4 };
+  } catch(e) { return { type: 'none', volume: 0.4 }; }
+}
+
+function saveAmbientState(state) {
+  try { localStorage.setItem(AMBIENT_STORAGE, JSON.stringify(state)); }
+  catch(e) {}
+}
+
+function createNoiseBuffer(duration) {
+  const ctx = getAudioContext();
+  const len = ctx.sampleRate * duration;
+  const buf = ctx.createBuffer(1, len, ctx.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+  return buf;
+}
+
+function stopAmbient() {
+  if (!ambientNodes) return;
+  // Clear any running intervals
+  if (ambientNodes.dropInterval) clearInterval(ambientNodes.dropInterval);
+  if (ambientNodes.crackleInterval) clearInterval(ambientNodes.crackleInterval);
+  // Fade out
+  try { ambientNodes.gain.gain.linearRampToValueAtTime(0, getAudioContext().currentTime + 0.3); } catch(e) {}
+  var nodes = ambientNodes;
+  ambientNodes = null;
+  setTimeout(function() {
+    try {
+      if (nodes.src) nodes.src.stop();
+      if (nodes.lfo) { try { nodes.lfo.stop(); } catch(e) {} }
+      Object.values(nodes).forEach(function(n) { try { n.disconnect(); } catch(e) {} });
+    } catch(e) {}
+  }, 350);
+}
+
+function startAmbient(type, volume) {
+  stopAmbient();
+  if (type === 'none') return;
+  const ctx = getAudioContext();
+  const gain = ctx.createGain();
+  gain.gain.setValueAtTime(0, ctx.currentTime);
+  gain.gain.linearRampToValueAtTime(volume * 0.7, ctx.currentTime + 0.5);
+  gain.connect(ctx.destination);
+
+  if (type === 'white') {
+    // Simple white noise
+    const buf = createNoiseBuffer(4);
+    const src = ctx.createBufferSource();
+    src.buffer = buf; src.loop = true;
+    src.connect(gain);
+    src.start();
+    ambientNodes = { src, gain };
+  } else if (type === 'rain') {
+    // Rain: lowpass-filtered noise + random droplet clicks
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'lowpass'; filter.frequency.value = 2000;
+    const buf = createNoiseBuffer(4);
+    const src = ctx.createBufferSource();
+    src.buffer = buf; src.loop = true;
+    src.connect(filter); filter.connect(gain);
+    src.start();
+
+    // Droplet oscillator — short random pulses
+    const dropGain = ctx.createGain();
+    dropGain.gain.value = volume * 0.3;
+    dropGain.connect(gain);
+    const dropInterval = setInterval(function() {
+      if (!ambientNodes) { clearInterval(dropInterval); return; }
+      const osc = ctx.createOscillator();
+      const dg = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = 400 + Math.random() * 800;
+      dg.gain.setValueAtTime(Math.random() * 0.15, ctx.currentTime);
+      dg.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+      osc.connect(dg); dg.connect(dropGain);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.08);
+    }, 200);
+    ambientNodes = { src, gain, filter, dropGain, dropInterval };
+  } else if (type === 'fire') {
+    // Campfire: bandpass noise with amplitude modulation + crackles
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'bandpass'; filter.frequency.value = 400; filter.Q.value = 0.5;
+    const buf = createNoiseBuffer(4);
+    const src = ctx.createBufferSource();
+    src.buffer = buf; src.loop = true;
+
+    // Low-frequency oscillation for flicker
+    const lfo = ctx.createOscillator();
+    const lfoGain = ctx.createGain();
+    lfo.type = 'sine'; lfo.frequency.value = 0.7;
+    lfoGain.gain.value = 0.3;
+    lfo.connect(lfoGain); lfoGain.connect(gain.gain);
+    lfo.start();
+
+    src.connect(filter); filter.connect(gain);
+    src.start();
+
+    // Crackles — short bursts of higher-freq noise
+    const crackleGain = ctx.createGain();
+    crackleGain.gain.value = volume * 0.25;
+    crackleGain.connect(gain);
+    const crackleInterval = setInterval(function() {
+      if (!ambientNodes) { clearInterval(crackleInterval); return; }
+      if (Math.random() < 0.4) {
+        const cb = ctx.createBufferSource();
+        const cn = createNoiseBuffer(0.08);
+        cb.buffer = cn;
+        const cg = ctx.createGain();
+        cg.gain.setValueAtTime(Math.random() * 0.2, ctx.currentTime);
+        cg.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+        cb.connect(cg); cg.connect(crackleGain);
+        cb.start(ctx.currentTime);
+        cb.stop(ctx.currentTime + 0.08);
+      }
+    }, 300);
+    ambientNodes = { src, gain, filter, lfo, lfoGain, crackleGain, crackleInterval };
+  }
+}
+
+// ── Local File Player ──────────────────────────────────────
+let localAudioFiles = [];
+let localCurrentIdx = -1;
+
+function handleFileDrop(e) {
+  e.preventDefault();
+  const files = Array.from(e.dataTransfer.files).filter(function(f) {
+    return f.type.startsWith('audio/') || /\.(mp3|wav|flac|ogg|aac|m4a)$/i.test(f.name);
+  });
+  if (files.length === 0) return;
+  localAudioFiles = files;
+  localCurrentIdx = 0;
+  renderLocalPlaylist();
+  playLocalFile(0);
+}
+
+function handleFileSelect(e) {
+  const files = Array.from(e.target.files).filter(function(f) {
+    return f.type.startsWith('audio/') || /\.(mp3|wav|flac|ogg|aac|m4a)$/i.test(f.name);
+  });
+  if (files.length === 0) return;
+  localAudioFiles = files;
+  localCurrentIdx = 0;
+  renderLocalPlaylist();
+  playLocalFile(0);
+}
+
+function playLocalFile(idx) {
+  if (idx < 0 || idx >= localAudioFiles.length) return;
+  localCurrentIdx = idx;
+  const file = localAudioFiles[idx];
+  const audio = document.getElementById('musicAudio');
+  const url = URL.createObjectURL(file);
+  audio.src = url;
+  audio.play().catch(function() {});
+  renderLocalPlaylist();
+  updateLocalNowPlaying();
+}
+
+function updateLocalNowPlaying() {
+  const el = document.getElementById('localNowPlaying');
+  if (!el) return;
+  if (localCurrentIdx >= 0 && localCurrentIdx < localAudioFiles.length) {
+    el.textContent = '正在播放: ' + localAudioFiles[localCurrentIdx].name;
+  } else {
+    el.textContent = '未在播放';
+  }
+}
+
+function renderLocalPlaylist() {
+  const list = document.getElementById('localPlaylist');
+  if (!list) return;
+  list.innerHTML = localAudioFiles.map(function(f, i) {
+    var cls = i === localCurrentIdx ? ' class="active"' : '';
+    return '<div' + cls + ' onclick="playLocalFile(' + i + ')">' + (i + 1) + '. ' + f.name + '</div>';
+  }).join('');
+}
+
+function onMusicAudioEnded() {
+  if (localCurrentIdx < localAudioFiles.length - 1) {
+    playLocalFile(localCurrentIdx + 1);
+  }
+}
+
+// ── Music Card UI Controls ─────────────────────────────────
+function onMusicToggle() {
+  const card = document.getElementById('musicCard');
+  card.classList.toggle('open');
+  const toggle = card.querySelector('.music-toggle');
+  toggle.textContent = card.classList.contains('open') ? '折叠' : '展开';
+}
+
+function onMusicTabSwitch(tab) {
+  const tabs = document.querySelectorAll('.music-tab');
+  tabs.forEach(function(t) { t.classList.remove('active'); });
+  tab.classList.add('active');
+  var panel = tab.dataset.tab;
+  document.getElementById('panelAmbient').style.display = panel === 'ambient' ? '' : 'none';
+  document.getElementById('panelLocal').style.display = panel === 'local' ? '' : 'none';
+  document.getElementById('panelNetease').style.display = panel === 'netease' ? '' : 'none';
+}
+
+function onAmbientTypeChange() {
+  var type = document.getElementById('ambientType').value;
+  var vol = parseInt(document.getElementById('ambientVolume').value) / 100;
+  ambientType = type;
+  ambientVolume = vol;
+  saveAmbientState({ type: type, volume: vol });
+  if (type === 'none') {
+    stopAmbient();
+    updateMusicCollapsedText();
+    return;
+  }
+  // User gesture from select change unlocks AudioContext
+  startAmbient(type, vol);
+  updateMusicCollapsedText();
+}
+
+function onAmbientVolumeChange() {
+  var type = document.getElementById('ambientType').value;
+  var vol = parseInt(document.getElementById('ambientVolume').value) / 100;
+  ambientVolume = vol;
+  saveAmbientState({ type: type, volume: vol });
+  if (ambientNodes && ambientNodes.gain) {
+    ambientNodes.gain.gain.linearRampToValueAtTime(vol * 0.7, getAudioContext().currentTime + 0.2);
+  }
+  // Also update local audio volume
+  document.getElementById('musicAudio').volume = vol;
+}
+
+function updateMusicCollapsedText() {
+  var el = document.getElementById('musicCollapsedText');
+  var type = document.getElementById('ambientType');
+  var labels = { none: '静音', rain: '雨声', white: '白噪音', fire: '篝火' };
+  var t = type ? type.value : 'none';
+  el.textContent = '🎵 ' + (labels[t] || '背景音乐');
+}
+
+function onLoadNetease() {
+  var container = document.getElementById('neteasePlayer');
+  var id = document.getElementById('neteaseId').value.trim();
+  var type = document.getElementById('neteaseType').value;
+  if (!id) { container.innerHTML = '<p style="color:var(--red-ink);font-size:11px;">请输入 ID</p>'; return; }
+  container.innerHTML =
+    '<iframe style="width:100%;height:' + (type === '0' ? '380' : '80') + 'px;" ' +
+    'src="//music.163.com/outchain/player?type=' + type + '&id=' + id + '&auto=0&height=' + (type === '0' ? '380' : '66') + '" ' +
+    'frameborder="0" onerror="this.style.display=\'none\'"></iframe>' +
+    '<p style="font-size:10px;color:var(--ink-faint);margin-top:4px;">若无法加载，请尝试用服务器方式打开页面，或使用氛围音效/本地文件</p>';
+}
+
+// ── Restore ambient state on page load ─────────────────────
+function restoreMusicState() {
+  var state = loadAmbientState();
+  var typeEl = document.getElementById('ambientType');
+  var volEl = document.getElementById('ambientVolume');
+  if (typeEl) typeEl.value = state.type || 'none';
+  if (volEl) volEl.value = Math.round((state.volume || 0.4) * 100);
+  ambientType = state.type || 'none';
+  ambientVolume = state.volume || 0.4;
+  updateMusicCollapsedText();
+  // Only auto-start if user selects — browser policy prevents auto-play
 }
 
 function fireStamp() {
@@ -2280,6 +2787,7 @@ function showAfterGenerate() {
   document.getElementById('btnStats').style.display = '';
   document.getElementById('btnExport').style.display = '';
   document.getElementById('btnImport').style.display = '';
+  document.getElementById('musicCard').style.display = '';
   document.getElementById('legend').style.display = '';
   document.getElementById('contentPanel').classList.add('open');
   document.getElementById('editHint').textContent = '点击表格中「今日背诵」列可编辑内容';
@@ -2834,6 +3342,28 @@ function init() {
   document.getElementById('dataModalOverlay').addEventListener('click', function(e) {
     if (e.target === this) this.classList.remove('open');
   });
+  // Music card
+  document.getElementById('musicHeader').addEventListener('click', onMusicToggle);
+  document.querySelectorAll('.music-tab').forEach(function(tab) {
+    tab.addEventListener('click', function() { onMusicTabSwitch(tab); });
+  });
+  document.getElementById('ambientType').addEventListener('change', onAmbientTypeChange);
+  document.getElementById('ambientVolume').addEventListener('input', onAmbientVolumeChange);
+  // Local file handlers
+  var dropzone = document.getElementById('musicDropzone');
+  dropzone.addEventListener('dragover', function(e) { e.preventDefault(); dropzone.classList.add('dragover'); });
+  dropzone.addEventListener('dragleave', function() { dropzone.classList.remove('dragover'); });
+  dropzone.addEventListener('drop', function(e) { dropzone.classList.remove('dragover'); handleFileDrop(e); });
+  document.getElementById('btnBrowseFiles').addEventListener('click', function() {
+    document.getElementById('musicFileInput').click();
+  });
+  document.getElementById('musicFileInput').addEventListener('change', handleFileSelect);
+  document.getElementById('musicAudio').addEventListener('ended', onMusicAudioEnded);
+  // NetEase
+  document.getElementById('btnLoadNetease').addEventListener('click', onLoadNetease);
+  // Restore state
+  restoreMusicState();
+
   document.getElementById('btnNotify').addEventListener('click', onToggleNotify);
   document.getElementById('notifyTime').addEventListener('change', function() {
     if (notifyEnabled) {
