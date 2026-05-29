@@ -1686,15 +1686,40 @@ body::after {
   color: var(--iron-gall-ink);
 }
 .music-playlist div {
-  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 8px;
   cursor: pointer;
   border-radius: 1px;
   transition: background 0.15s;
+  gap: 8px;
 }
 .music-playlist div:hover { background: rgba(163,120,10,0.06); }
 .music-playlist div.active {
   color: var(--vermillion-ink);
   font-weight: 600;
+  background: rgba(160,48,48,0.04);
+}
+.music-playlist .pl-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.music-playlist .pl-del {
+  flex-shrink: 0;
+  width: 22px; height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  color: var(--faded-ink);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.15s;
+  line-height: 1;
+}
+.music-playlist .pl-del:hover {
+  color: var(--vermillion-ink);
+  border-color: rgba(160,48,48,0.2);
+  background: rgba(160,48,48,0.06);
 }
 .music-now-playing {
   font-family: "Crimson Text", serif;
@@ -1703,6 +1728,68 @@ body::after {
   font-style: italic;
   padding: 4px 0;
   min-height: 20px;
+}
+
+/* Local player controls */
+.local-player {
+  border: 1px solid rgba(125,94,16,0.18);
+  border-radius: 2px;
+  padding: 10px 14px;
+  margin-bottom: 10px;
+  background: rgba(255,255,255,0.25);
+}
+.local-now-playing {
+  font-family: "Crimson Text", "Noto Serif SC", serif;
+  font-size: 13px;
+  color: var(--iron-gall-ink);
+  font-weight: 600;
+  margin-bottom: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.local-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.local-ctrl-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px; height: 32px;
+  border: 1px solid rgba(125,94,16,0.3);
+  border-radius: 50%;
+  background: rgba(255,255,255,0.4);
+  color: var(--iron-gall-ink);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.18s;
+  padding: 0;
+}
+.local-ctrl-btn:hover {
+  background: rgba(255,255,255,0.7);
+  border-color: rgba(125,94,16,0.5);
+}
+.local-btn-play {
+  width: 36px; height: 36px;
+  font-size: 14px;
+  background: linear-gradient(180deg, #c89830 0%, #a3780a 30%, #8a6206 60%, #a3780a 100%);
+  color: #100c02;
+  border-color: #7d5e10;
+  box-shadow: 0 2px 4px rgba(17,17,34,0.15);
+}
+.local-btn-play:hover {
+  background: linear-gradient(180deg, #d8a840 0%, #b88610 30%, #9a6f0c 60%, #b88610 100%);
+  transform: scale(1.05);
+}
+.local-time {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  color: var(--faded-ink);
+  min-width: 44px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
 }
 
 /* ── Reduced Motion — Accessibility ────────────────────── */
@@ -1832,8 +1919,26 @@ body::after {
         拖放音频文件到此处<br><small>支持 MP3 / WAV / FLAC / OGG</small>
       </div>
       <input type="file" id="musicFileInput" accept="audio/*" multiple style="display:none;">
-      <button class="btn btn-outline btn-sm" id="btnBrowseFiles">浏览文件...</button>
-      <div class="music-now-playing" id="localNowPlaying">未在播放</div>
+      <div style="display:flex;gap:8px;margin-bottom:10px;">
+        <button class="btn btn-outline btn-sm" id="btnBrowseFiles">添加文件</button>
+      </div>
+
+      <!-- Player controls -->
+      <div class="local-player" id="localPlayer" style="display:none;">
+        <div class="local-now-playing" id="localNowPlaying">未在播放</div>
+        <div class="local-controls">
+          <button class="local-ctrl-btn" id="btnPrev" title="上一首">&#x23EE;</button>
+          <button class="local-ctrl-btn local-btn-play" id="btnPlayPause" title="播放/暂停">&#x25B6;</button>
+          <button class="local-ctrl-btn" id="btnNext" title="下一首">&#x23ED;</button>
+          <span class="local-time" id="localTime">--:--</span>
+          <div class="music-row" style="margin:0;flex:1;max-width:140px;">
+            <label style="min-width:0;font-size:9px;">🔊</label>
+            <input type="range" id="localVolume" class="music-slider" min="0" max="100" value="70">
+          </div>
+        </div>
+      </div>
+
+      <!-- Playlist -->
       <div class="music-playlist" id="localPlaylist"></div>
     </div>
 
@@ -2125,27 +2230,37 @@ function startAmbient(type, volume) {
 let localAudioFiles = [];
 let localCurrentIdx = -1;
 
-function handleFileDrop(e) {
-  e.preventDefault();
-  const files = Array.from(e.dataTransfer.files).filter(function(f) {
+function addLocalFiles(fileList) {
+  const newFiles = Array.from(fileList).filter(function(f) {
     return f.type.startsWith('audio/') || /\.(mp3|wav|flac|ogg|aac|m4a)$/i.test(f.name);
   });
-  if (files.length === 0) return;
-  localAudioFiles = files;
-  localCurrentIdx = 0;
+  if (newFiles.length === 0) return;
+  // Append new files, avoid exact duplicates by name+size
+  for (var i = 0; i < newFiles.length; i++) {
+    var dup = false;
+    for (var j = 0; j < localAudioFiles.length; j++) {
+      if (localAudioFiles[j].name === newFiles[i].name && localAudioFiles[j].size === newFiles[i].size) {
+        dup = true; break;
+      }
+    }
+    if (!dup) localAudioFiles.push(newFiles[i]);
+  }
+  if (localCurrentIdx < 0) localCurrentIdx = 0;
+  document.getElementById('localPlayer').style.display = localAudioFiles.length > 0 ? '' : 'none';
   renderLocalPlaylist();
-  playLocalFile(0);
+  if (localCurrentIdx === 0 && localAudioFiles.length > 0) {
+    playLocalFile(0);
+  }
+}
+
+function handleFileDrop(e) {
+  e.preventDefault();
+  addLocalFiles(e.dataTransfer.files);
 }
 
 function handleFileSelect(e) {
-  const files = Array.from(e.target.files).filter(function(f) {
-    return f.type.startsWith('audio/') || /\.(mp3|wav|flac|ogg|aac|m4a)$/i.test(f.name);
-  });
-  if (files.length === 0) return;
-  localAudioFiles = files;
-  localCurrentIdx = 0;
-  renderLocalPlaylist();
-  playLocalFile(0);
+  addLocalFiles(e.target.files);
+  e.target.value = '';
 }
 
 function playLocalFile(idx) {
@@ -2153,35 +2268,114 @@ function playLocalFile(idx) {
   localCurrentIdx = idx;
   const file = localAudioFiles[idx];
   const audio = document.getElementById('musicAudio');
+  // Revoke old blob URL if present
+  if (audio.src && audio.src.startsWith('blob:')) {
+    URL.revokeObjectURL(audio.src);
+  }
   const url = URL.createObjectURL(file);
   audio.src = url;
-  audio.play().catch(function() {});
+  audio.load();
+  audio.play().then(function() {
+    updatePlayPauseBtn(true);
+  }).catch(function() {
+    updatePlayPauseBtn(false);
+  });
+  renderLocalPlaylist();
+  updateLocalNowPlaying();
+  updateLocalTime();
+}
+
+function togglePlayPause() {
+  const audio = document.getElementById('musicAudio');
+  if (!audio.src) return;
+  if (audio.paused) {
+    audio.play().then(function() { updatePlayPauseBtn(true); }).catch(function() {});
+  } else {
+    audio.pause();
+    updatePlayPauseBtn(false);
+  }
+}
+
+function playNext() {
+  if (localAudioFiles.length === 0) return;
+  var next = (localCurrentIdx + 1) % localAudioFiles.length;
+  playLocalFile(next);
+}
+
+function playPrev() {
+  if (localAudioFiles.length === 0) return;
+  var prev = localCurrentIdx <= 0 ? localAudioFiles.length - 1 : localCurrentIdx - 1;
+  playLocalFile(prev);
+}
+
+function removeFromPlaylist(idx, e) {
+  if (e) { e.stopPropagation(); e.preventDefault(); }
+  if (idx < 0 || idx >= localAudioFiles.length) return;
+  var wasPlaying = idx === localCurrentIdx;
+  var audio = document.getElementById('musicAudio');
+  localAudioFiles.splice(idx, 1);
+  if (localAudioFiles.length === 0) {
+    localCurrentIdx = -1;
+    audio.pause();
+    audio.src = '';
+    document.getElementById('localPlayer').style.display = 'none';
+    updatePlayPauseBtn(false);
+  } else if (idx < localCurrentIdx) {
+    localCurrentIdx--;
+    if (wasPlaying) playLocalFile(localCurrentIdx);
+  } else if (wasPlaying) {
+    if (localCurrentIdx >= localAudioFiles.length) localCurrentIdx = 0;
+    playLocalFile(localCurrentIdx);
+  }
   renderLocalPlaylist();
   updateLocalNowPlaying();
 }
 
+function updatePlayPauseBtn(playing) {
+  var btn = document.getElementById('btnPlayPause');
+  if (!btn) return;
+  btn.innerHTML = playing ? '&#x23F8;' : '&#x25B6;';
+}
+
 function updateLocalNowPlaying() {
-  const el = document.getElementById('localNowPlaying');
+  var el = document.getElementById('localNowPlaying');
   if (!el) return;
   if (localCurrentIdx >= 0 && localCurrentIdx < localAudioFiles.length) {
-    el.textContent = '正在播放: ' + localAudioFiles[localCurrentIdx].name;
+    el.textContent = localAudioFiles[localCurrentIdx].name;
   } else {
     el.textContent = '未在播放';
   }
 }
 
+function updateLocalTime() {
+  var el = document.getElementById('localTime');
+  var audio = document.getElementById('musicAudio');
+  if (!el || !audio || !audio.duration || isNaN(audio.duration)) {
+    if (el) el.textContent = '--:--';
+    return;
+  }
+  var m = Math.floor(audio.currentTime / 60);
+  var s = Math.floor(audio.currentTime % 60);
+  el.textContent = m + ':' + String(s).padStart(2, '0');
+}
+
 function renderLocalPlaylist() {
-  const list = document.getElementById('localPlaylist');
+  var list = document.getElementById('localPlaylist');
   if (!list) return;
   list.innerHTML = localAudioFiles.map(function(f, i) {
-    var cls = i === localCurrentIdx ? ' class="active"' : '';
-    return '<div' + cls + ' onclick="playLocalFile(' + i + ')">' + (i + 1) + '. ' + f.name + '</div>';
+    var cls = i === localCurrentIdx ? ' active' : '';
+    return '<div class="' + cls + '" onclick="playLocalFile(' + i + ')">' +
+      '<span class="pl-name">' + (i + 1) + '. ' + f.name + '</span>' +
+      '<span class="pl-del" onclick="removeFromPlaylist(' + i + ',event)" title="移除">&times;</span>' +
+    '</div>';
   }).join('');
 }
 
 function onMusicAudioEnded() {
   if (localCurrentIdx < localAudioFiles.length - 1) {
     playLocalFile(localCurrentIdx + 1);
+  } else {
+    updatePlayPauseBtn(false);
   }
 }
 
@@ -3358,6 +3552,15 @@ function init() {
   });
   document.getElementById('musicFileInput').addEventListener('change', handleFileSelect);
   document.getElementById('musicAudio').addEventListener('ended', onMusicAudioEnded);
+  document.getElementById('musicAudio').addEventListener('timeupdate', updateLocalTime);
+  document.getElementById('musicAudio').addEventListener('play', function() { updatePlayPauseBtn(true); });
+  document.getElementById('musicAudio').addEventListener('pause', function() { updatePlayPauseBtn(false); });
+  document.getElementById('btnPlayPause').addEventListener('click', togglePlayPause);
+  document.getElementById('btnPrev').addEventListener('click', playPrev);
+  document.getElementById('btnNext').addEventListener('click', playNext);
+  document.getElementById('localVolume').addEventListener('input', function() {
+    document.getElementById('musicAudio').volume = parseInt(this.value) / 100;
+  });
   // NetEase
   document.getElementById('btnLoadNetease').addEventListener('click', onLoadNetease);
   // Restore state
