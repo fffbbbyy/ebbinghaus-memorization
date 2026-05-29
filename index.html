@@ -1,0 +1,2796 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>艾宾浩斯记忆曲线背诵表</title>
+<meta name="theme-color" content="#3d1f0c">
+<link rel="manifest" href="./manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Playfair+Display:ital,wght@0,500;0,700;0,900;1,500&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   EBBINGHAUS LABORATORY RECORD — 19th C. Scientific Notebook
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Chromatic System ───────────────────────────────────── */
+:root {
+  /* Parchment spectrum */
+  --parchment-base: #f2dfb8;
+  --parchment-aged: #e6cf9a;
+  --parchment-stained: #d9bd7a;
+  --parchment-edge: #c4a55c;
+
+  /* Iron-gall ink spectrum */
+  --iron-gall-ink: #111122;
+  --faded-ink: #2d2d42;
+  --blue-ink: #081d4f;
+  --red-ink: #6b0000;
+
+  /* Metallurgy & reagents */
+  --brass-polished: #a3780a;
+  --brass-tarnished: #7d5e10;
+  --copper-oxide: #a05a28;
+  --mercury-silver: #e0ddd5;
+  --reagent-blue: #3c709a;
+  --reagent-green: #236b42;
+  --reagent-purple: #552a80;
+  --reagent-orange: #b84500;
+
+  /* Review-column watercolor washes */
+  --wash-1: rgba(125,170,135,0.32);
+  --wash-2: rgba(195,155,105,0.32);
+  --wash-4: rgba(110,145,175,0.32);
+  --wash-7: rgba(148,112,162,0.32);
+  --wash-15: rgba(200,180,110,0.35);
+  --wash-30: rgba(185,108,108,0.32);
+
+  /* Juridical lines */
+  --rule: rgba(17,17,34,0.13);
+  --rule-strong: rgba(17,17,34,0.22);
+  --rule-table: rgba(17,17,34,0.09);
+
+  /* Shadows & depths */
+  --shadow-card: 0 3px 16px rgba(17,17,34,0.14), 0 1px 4px rgba(17,17,34,0.09);
+  --shadow-pressed: 0 1px 3px rgba(17,17,34,0.15), inset 0 2px 5px rgba(17,17,34,0.10);
+  --radius: 3px;
+  --radius-sm: 2px;
+  --transition: 0.22s cubic-bezier(0.25,0.1,0.25,1);
+
+  /* Legacy aliases for JS compatibility */
+  --parchment: var(--parchment-base);
+  --parchment-dark: var(--parchment-aged);
+  --parchment-deeper: var(--parchment-stained);
+  --ink: var(--iron-gall-ink);
+  --ink-soft: var(--faded-ink);
+  --ink-muted: #5e5242;
+  --ink-faint: #8e8370;
+  --brass: var(--brass-polished);
+  --brass-light: #c9ac68;
+  --brass-dark: var(--brass-tarnished);
+  --vermillion: #a03030;
+  --vermillion-ink: #751515;
+  --bottle-green: var(--reagent-green);
+  --navy: #151f2b;
+}
+
+/* ── Body — Laboratory Workbench ────────────────────────── */
+body {
+  font-family: "Crimson Text", "Noto Serif SC", "Source Han Serif SC", "STSong", "SimSun", Georgia, serif;
+  color: var(--iron-gall-ink);
+  line-height: 1.6;
+  min-height: 100vh;
+  background-color: #3a2210;
+
+  /* Multi-plate background: wood → parchment → fiber → grid → stains */
+  background-image:
+    /* 6. Charcoal hand-drawn grid (topmost) — darker, more visible */
+    repeating-linear-gradient(0deg,
+      transparent 0px,
+      rgba(55,42,28,0.035) 0.5px, transparent 0.5px, transparent 23.5px,
+      rgba(55,42,28,0.052) 24px, transparent 24px, transparent 47.5px,
+      rgba(55,42,28,0.042) 48px, transparent 48px
+    ),
+    repeating-linear-gradient(90deg,
+      transparent 0px,
+      rgba(55,42,28,0.03) 0.5px, transparent 0.5px, transparent 31.5px,
+      rgba(55,42,28,0.05) 32px, transparent 32px, transparent 63.5px,
+      rgba(55,42,28,0.04) 64px, transparent 64px
+    ),
+    /* 5. Paper fiber noise — coarser */
+    repeating-linear-gradient(0deg,
+      transparent, transparent 2px,
+      rgba(130,115,95,0.055) 2px, rgba(130,115,95,0.055) 3px
+    ),
+    repeating-linear-gradient(90deg,
+      transparent, transparent 3px,
+      rgba(130,115,95,0.035) 3px, rgba(130,115,95,0.035) 4px,
+      transparent 4px, transparent 7px,
+      rgba(130,115,95,0.025) 7px, rgba(130,115,95,0.025) 8px
+    ),
+    /* 4. Parchment aging — deeper vignette, scorched edges */
+    radial-gradient(ellipse 82% 100% at 50% 0%,
+      rgba(242,223,184,0.98) 0%,
+      rgba(230,207,154,0.94) 25%,
+      rgba(217,189,122,0.85) 50%,
+      rgba(196,165,92,0.65) 72%,
+      rgba(160,130,70,0.35) 90%,
+      rgba(120,95,45,0.12) 98%,
+      transparent 100%
+    ),
+    /* 3. Parchment base tone — richer amber */
+    linear-gradient(175deg,
+      #f2dfb8 0%,
+      #eddaa8 15%,
+      #e8cf92 40%,
+      #e6cf9a 65%,
+      #eed8a4 100%
+    ),
+    /* 2. Wood-grain substrate — darker, more pronounced */
+    repeating-linear-gradient(90deg,
+      transparent 0px,
+      rgba(80,40,15,0.16) 1.5px,
+      rgba(60,28,10,0.10) 2px,
+      transparent 3px,
+      rgba(90,45,18,0.08) 6px,
+      transparent 7px,
+      rgba(65,30,10,0.13) 9px,
+      transparent 13px,
+      rgba(75,38,14,0.09) 15px,
+      transparent 16px
+    ),
+    repeating-linear-gradient(180deg,
+      rgba(50,22,6,0.06) 0px,
+      transparent 40px,
+      rgba(70,32,10,0.05) 80px,
+      transparent 120px
+    ),
+    linear-gradient(180deg, #3d1f0c 0%, #30180a 25%, #4a2a15 50%, #30180a 75%, #3d1f0c 100%);
+  background-attachment: fixed;
+}
+
+/* Reagent stains — body pseudo-elements */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 0;
+  background:
+    /* Copper sulfate — deeper blue, upper-right */
+    radial-gradient(ellipse 200px 140px at 88% 12%, rgba(60,110,150,0.10) 0%, rgba(60,110,150,0.04) 40%, transparent 70%),
+    radial-gradient(ellipse 100px 80px at 85% 10%, rgba(60,110,150,0.07) 0%, transparent 100%),
+    /* Potassium permanganate — deeper purple, lower-left */
+    radial-gradient(ellipse 160px 120px at 8% 78%, rgba(85,40,128,0.09) 0%, rgba(85,40,128,0.03) 45%, transparent 70%),
+    radial-gradient(ellipse 80px 65px at 12% 75%, rgba(85,40,128,0.06) 0%, transparent 100%),
+    /* Iodine — darker brown, mid-right */
+    radial-gradient(ellipse 130px 100px at 92% 55%, rgba(120,70,20,0.10) 0%, rgba(120,70,20,0.03) 50%, transparent 75%),
+    /* Iron-gall ink spill — darker, upper-left */
+    radial-gradient(ellipse 110px 80px at 14% 20%, rgba(17,17,34,0.06) 0%, transparent 70%);
+}
+
+/* Coffee rings */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 0;
+  background:
+    /* Ring 1 — bottom-right, darker */
+    radial-gradient(circle 48px at 82% 88%, transparent 27px, rgba(120,85,40,0.10) 28px, rgba(120,85,40,0.06) 32px, transparent 33px),
+    radial-gradient(circle 52px at 82% 88%, transparent 30px, rgba(120,85,40,0.07) 31px, transparent 35px),
+    /* Ring 2 — upper-left, darker */
+    radial-gradient(circle 38px at 10% 32%, transparent 21px, rgba(120,85,40,0.09) 22px, rgba(120,85,40,0.04) 26px, transparent 27px),
+    /* Ring 3 — mid-bottom, darker */
+    radial-gradient(circle 55px at 45% 94%, transparent 31px, rgba(105,65,30,0.08) 32px, rgba(105,65,30,0.03) 37px, transparent 38px);
+}
+
+/* ── Layout ────────────────────────────────────────────── */
+.app {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 28px 24px 48px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Header — Title Page of a Scientific Treatise ──────── */
+.header {
+  text-align: center;
+  padding: 44px 20px 36px;
+  position: relative;
+}
+.header::before,
+.header::after {
+  content: '';
+  display: block;
+  height: 2px;
+  margin: 0 auto;
+  background: linear-gradient(90deg, transparent, rgba(125,94,16,0.55), var(--brass-tarnished), rgba(125,94,16,0.55), transparent);
+}
+.header::before { width: 260px; margin-bottom: 32px; }
+.header::after  { width: 220px; margin-top: 32px; }
+.header h1 {
+  font-family: "Playfair Display", "Noto Serif SC", "Source Han Serif SC", serif;
+  font-size: 42px;
+  font-weight: 900;
+  color: var(--iron-gall-ink);
+  letter-spacing: 2px;
+  font-variant: small-caps;
+  text-shadow: 0 1px 3px rgba(17,17,34,0.12);
+  position: relative;
+}
+/* Drop-cap decorative initial — larger, more dramatic */
+.header h1::first-letter {
+  font-size: 52px;
+  color: var(--red-ink);
+  text-shadow: 0 2px 4px rgba(107,0,0,0.15);
+}
+.header .ornament {
+  display: block;
+  font-family: "Crimson Text", serif;
+  font-size: 18px;
+  color: var(--brass-tarnished);
+  margin: 12px 0 8px;
+  letter-spacing: 12px;
+  text-shadow: 0 1px 1px rgba(125,94,16,0.2);
+}
+.header .subtitle {
+  color: var(--faded-ink);
+  font-size: 13px;
+  margin-top: 10px;
+  font-style: italic;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.header .subtitle .badge {
+  display: inline-flex;
+  align-items: center;
+  font-family: "JetBrains Mono", "Crimson Text", monospace;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 500;
+  color: var(--iron-gall-ink);
+  background: rgba(230,207,154,0.55);
+  padding: 3px 10px;
+  border: 1px solid rgba(125,94,16,0.32);
+  border-radius: 2px;
+  letter-spacing: 0.5px;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.2);
+}
+
+/* ── Cards — Library Index Cards ───────────────────────── */
+.card {
+  background:
+    linear-gradient(180deg, rgba(255,250,240,0.8) 0%, rgba(242,223,184,0.86) 50%, rgba(230,207,154,0.82) 100%);
+  border: 1px solid rgba(125,94,18,0.28);
+  border-radius: 1px;
+  box-shadow:
+    0 4px 18px rgba(17,17,34,0.13),
+    0 1px 4px rgba(17,17,34,0.08),
+    inset 0 0 0 1px rgba(255,255,255,0.25);
+  margin-bottom: 20px;
+  position: relative;
+}
+/* Card top-edge rule — like a library index card */
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 14px; right: 14px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(125,94,16,0.38), transparent);
+}
+/* Card hole-punch detail — top-left */
+.card::after {
+  content: '';
+  position: absolute;
+  top: 10px; left: 6px;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: rgba(17,17,34,0.06);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.15), 0 0 0 1px rgba(17,17,34,0.08);
+}
+
+/* ── Controls — Brass Instrument Panel ─────────────────── */
+.controls { padding: 22px 24px 18px; }
+.control-row {
+  display: flex; flex-wrap: wrap; align-items: flex-end; gap: 14px;
+}
+.control-row + .control-row {
+  margin-top: 14px; padding-top: 14px;
+  border-top: 1px dotted rgba(17,17,34,0.1);
+}
+
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field label {
+  font-family: "JetBrains Mono", "Crimson Text", monospace;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--faded-ink);
+  text-transform: uppercase;
+  letter-spacing: 1.4px;
+}
+
+/* ── Inputs — Glass Beaker / Test Tube Style ───────────── */
+.field input, .field select {
+  padding: 8px 12px;
+  border: 1px solid rgba(125,94,16,0.4);
+  border-radius: 1px;
+  font-size: 13px;
+  font-family: "JetBrains Mono", "Crimson Text", monospace;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.6) 0%, rgba(240,230,210,0.48) 60%, rgba(215,205,185,0.4) 100%);
+  color: var(--iron-gall-ink);
+  transition: all 0.25s;
+  width: 130px;
+  box-shadow: inset 0 1px 4px rgba(17,17,34,0.08);
+  position: relative;
+}
+.field input:focus, .field select:focus {
+  outline: none;
+  border-color: var(--brass-polished);
+  box-shadow:
+    inset 0 1px 4px rgba(17,17,34,0.08),
+    0 0 0 3px rgba(163,120,10,0.12),
+    inset 0 -8px 12px -4px rgba(60,112,154,0.10);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.75) 0%, rgba(244,236,218,0.58) 55%, rgba(220,210,190,0.44) 100%);
+}
+
+/* ── Buttons — Brass Knobs & Wooden Handles ────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 20px;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  font-size: 12px;
+  font-family: "JetBrains Mono", "Crimson Text", "Noto Serif SC", monospace;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.25,0.1,0.25,1);
+  white-space: nowrap;
+  user-select: none;
+  letter-spacing: 0.5px;
+  position: relative;
+}
+
+/* Primary — Burnished Brass */
+.btn-primary {
+  background:
+    linear-gradient(180deg, #c89830 0%, #a3780a 30%, #8a6206 60%, #a3780a 100%);
+  color: #100c02;
+  border-color: #7d5e10;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.18);
+  box-shadow:
+    0 3px 8px rgba(17,17,34,0.22),
+    0 1px 2px rgba(17,17,34,0.12),
+    inset 0 1px 0 rgba(255,255,255,0.22),
+    inset 0 -2px 5px rgba(0,0,0,0.15);
+}
+.btn-primary:hover {
+  background:
+    linear-gradient(180deg, #d8a840 0%, #b88610 30%, #9a6f0c 60%, #b88610 100%);
+  box-shadow:
+    0 4px 14px rgba(17,17,34,0.26),
+    0 2px 4px rgba(17,17,34,0.14),
+    inset 0 1px 0 rgba(255,255,255,0.28),
+    inset 0 -2px 4px rgba(0,0,0,0.12);
+  transform: translateY(-1px);
+}
+.btn-primary:active {
+  transform: translateY(1px);
+  box-shadow:
+    0 1px 3px rgba(17,17,34,0.18),
+    inset 0 2px 6px rgba(0,0,0,0.18),
+    inset 0 -1px 0 rgba(255,255,255,0.12);
+}
+
+/* Accent — Aged Vermillion Lacquer */
+.btn-accent {
+  background:
+    linear-gradient(180deg, #b86040 0%, #90382a 40%, #7a2518 70%, #90382a 100%);
+  color: #fdf5ec;
+  border-color: #5a150a;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.22);
+  box-shadow:
+    0 3px 8px rgba(17,17,34,0.22),
+    inset 0 1px 0 rgba(255,255,255,0.12),
+    inset 0 -2px 5px rgba(0,0,0,0.15);
+}
+.btn-accent:hover {
+  background:
+    linear-gradient(180deg, #c87050 0%, #a04530 40%, #8b3020 70%, #a04530 100%);
+  box-shadow:
+    0 4px 14px rgba(17,17,34,0.26),
+    inset 0 1px 0 rgba(255,255,255,0.18),
+    inset 0 -2px 4px rgba(0,0,0,0.12);
+  transform: translateY(-1px);
+}
+.btn-accent:active { transform: translateY(1px); }
+
+/* Outline — Dark Wood Veneer */
+.btn-outline {
+  background:
+    linear-gradient(180deg, rgba(170,130,90,0.30) 0%, rgba(150,110,70,0.22) 50%, rgba(130,90,50,0.26) 100%);
+  color: var(--faded-ink);
+  border: 1px solid rgba(125,94,16,0.36);
+  box-shadow: 0 1px 4px rgba(17,17,34,0.10);
+}
+.btn-outline:hover {
+  background:
+    linear-gradient(180deg, rgba(180,140,100,0.38) 0%, rgba(160,120,80,0.28) 50%, rgba(140,100,60,0.32) 100%);
+  color: var(--iron-gall-ink);
+  border-color: rgba(125,94,16,0.52);
+  box-shadow: 0 3px 8px rgba(17,17,34,0.15);
+}
+.btn-outline:active { transform: translateY(1px); }
+
+.btn-sm { padding: 5px 14px; font-size: 11px; letter-spacing: 0.5px; }
+
+/* ── Stats — Laboratory Readings ───────────────────────── */
+.stats {
+  padding: 14px 22px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+}
+.stat-item { display: flex; align-items: center; gap: 6px; color: var(--faded-ink); }
+.stat-item .val {
+  font-weight: 700;
+  color: var(--iron-gall-ink);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+.stat-divider {
+  width: 1px; height: 18px;
+  background: linear-gradient(180deg, transparent, rgba(125,94,16,0.25), transparent);
+  margin: 0 4px;
+}
+
+/* Streak badge — vermillion wax seal on stats bar */
+.streak-badge {
+  display: flex; align-items: center; gap: 8px;
+  color: var(--red-ink);
+  font-family: "Crimson Text", "Noto Serif SC", serif;
+  font-size: 16px;
+  font-weight: 700;
+  font-style: italic;
+  letter-spacing: 1.5px;
+  padding: 0 4px 0 0;
+  white-space: nowrap;
+}
+.streak-badge .streak-num {
+  font-family: "Playfair Display", serif;
+  font-size: 32px;
+  font-weight: 900;
+  font-style: normal;
+  color: var(--vermillion-ink);
+  line-height: 1;
+  min-width: 1.4ch;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 1px 2px rgba(117,21,21,0.15);
+}
+.streak-flame { font-style: normal; font-size: 18px; color: var(--brass-tarnished); }
+.streak-badge.pulse .streak-num { animation: streakPulse 0.5s ease; }
+@keyframes streakPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.38); color: var(--copper-oxide); }
+  100% { transform: scale(1); }
+}
+
+/* ── Thermometer Progress Bar ──────────────────────────── */
+.stat-bar-wrap {
+  flex: 1; min-width: 130px; height: 8px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.5) 0%, rgba(232,213,163,0.4) 50%, rgba(200,180,140,0.3) 100%);
+  border-radius: 4px;
+  border: 1px solid rgba(125,94,16,0.3);
+  overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 1px 3px rgba(17,17,34,0.1);
+}
+/* Thermometer bulb at left */
+.stat-bar-wrap::before {
+  content: '';
+  position: absolute; left: -3px; top: -3px;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #e84040 0%, #b02020 60%, #801515 100%);
+  border: 1.5px solid rgba(125,94,16,0.5);
+  box-shadow: 0 1px 3px rgba(17,17,34,0.2), inset 0 1px 1px rgba(255,255,255,0.3);
+  z-index: 2;
+}
+.stat-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #b02020 0%, #d03030 40%, #e84040 100%);
+  border-radius: 3px;
+  transition: width 0.6s cubic-bezier(0.22,0.61,0.36,1);
+  position: relative;
+  margin-left: 5px;
+}
+.stat-bar-fill::after {
+  content: '';
+  position: absolute; right: 2px; top: 1px; bottom: 1px;
+  width: 2px;
+  background: rgba(255,255,255,0.4);
+  border-radius: 1px;
+}
+
+/* ── Today Focus View — Scholar's Daily Folio ──────────── */
+.today-overview {
+  padding: 0;
+  display: none;
+  background:
+    linear-gradient(175deg, rgba(255,250,240,0.96) 0%, rgba(242,223,184,0.97) 35%, rgba(230,207,154,0.94) 100%);
+  border: 1px solid rgba(125,94,16,0.32);
+  border-left: 6px solid var(--red-ink);
+  border-radius: 1px;
+  box-shadow:
+    0 6px 30px rgba(17,17,34,0.14),
+    0 2px 6px rgba(17,17,34,0.08),
+    inset 0 0 0 1px rgba(255,255,255,0.35);
+  position: relative;
+  overflow: hidden;
+}
+.today-overview::before {
+  content: '';
+  position: absolute; top: 0; left: 14px; right: 14px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(125,94,16,0.3), transparent);
+  z-index: 1; pointer-events: none;
+}
+/* Marginal pencil note line */
+.today-overview::after {
+  content: '';
+  position: absolute; left: 48px; top: 0; bottom: 0;
+  width: 1px;
+  background: rgba(192,64,64,0.08);
+  pointer-events: none;
+}
+.today-overview.open { display: block; }
+
+.today-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 24px 16px 56px;
+  border-bottom: 1px solid rgba(17,17,34,0.10);
+  background: rgba(255,255,255,0.25);
+}
+.today-label {
+  font-family: "Playfair Display", serif;
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--vermillion-ink);
+  letter-spacing: 1px;
+  font-variant: small-caps;
+  text-shadow: 0 1px 2px rgba(117,21,21,0.12);
+}
+.today-date {
+  font-family: "Crimson Text", serif;
+  font-size: 13px;
+  color: var(--faded-ink);
+  font-style: italic;
+  white-space: nowrap;
+}
+
+.today-grid {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 24px 20px 56px;
+}
+
+/* Section headers */
+.today-section { margin-bottom: 20px; }
+.today-section:last-child { margin-bottom: 0; }
+
+.today-section h4 {
+  font-family: "Playfair Display", serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--faded-ink);
+  margin-bottom: 10px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.today-section h4::after {
+  content: '';
+  flex: 1; height: 1px;
+  background: rgba(17,17,34,0.1);
+}
+
+/* Item list */
+.today-item-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.today-content-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: rgba(255,252,245,0.4);
+  border: 1px solid transparent;
+  border-left: 3px solid transparent;
+  border-radius: 0 2px 2px 0;
+  transition: all 0.28s cubic-bezier(0.25,0.1,0.25,1);
+  animation: todayItemEnter 0.48s cubic-bezier(0.22,0.61,0.36,1) both;
+  position: relative;
+}
+@keyframes todayItemEnter {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.today-content-item:hover {
+  background: rgba(255,255,250,0.75);
+  border-color: rgba(125,94,16,0.15);
+  border-left-color: var(--brass-light);
+  transform: translateX(3px);
+  box-shadow: 0 2px 8px rgba(17,17,34,0.07);
+}
+
+/* Done state — crossed out with green ink */
+.today-content-item.done {
+  opacity: 0.4;
+  background: rgba(35,107,66,0.04);
+  border-left-color: var(--reagent-green);
+}
+.today-content-item.done .today-item-text {
+  text-decoration: line-through;
+  color: var(--faded-ink);
+  text-decoration-color: rgba(35,107,66,0.45);
+  text-decoration-thickness: 1px;
+}
+
+.today-item-num {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--faded-ink);
+  min-width: 24px;
+  text-align: right;
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+.today-item-text {
+  flex: 1;
+  font-size: 15px;
+  color: var(--iron-gall-ink);
+  line-height: 1.5;
+  font-family: "Crimson Text", "Noto Serif SC", serif;
+}
+.today-item-text.empty {
+  color: var(--ink-faint);
+  font-style: italic;
+  font-size: 13px;
+}
+
+/* Interval tags — reagent-coded labels */
+.today-interval-tag {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 1px;
+  flex-shrink: 0;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.today-interval-tag.i1  { background: rgba(125,170,135,0.35); color: #1f3e28; }
+.today-interval-tag.i2  { background: rgba(195,155,105,0.35); color: #5a3e1f; }
+.today-interval-tag.i4  { background: rgba(110,145,175,0.35); color: #1f3e55; }
+.today-interval-tag.i7  { background: rgba(148,112,162,0.35); color: #3e284a; }
+.today-interval-tag.i15 { background: rgba(200,180,110,0.38); color: #554716; }
+.today-interval-tag.i30 { background: rgba(185,108,108,0.35); color: #682525; }
+
+/* ── Review Accordion Groups ─────────────────────────────── */
+.today-review-group {
+  border: 1px solid rgba(125,94,16,0.16);
+  border-radius: 2px;
+  margin-bottom: 6px;
+  overflow: hidden;
+  background: rgba(255,252,245,0.3);
+}
+.today-review-group:last-child { margin-bottom: 0; }
+
+.today-review-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.2s;
+  font-family: "Crimson Text", "Noto Serif SC", serif;
+  font-size: 14px;
+}
+.today-review-header:hover {
+  background: rgba(255,255,255,0.5);
+}
+
+.today-review-arrow {
+  font-size: 10px;
+  color: var(--faded-ink);
+  transition: transform 0.22s ease;
+  flex-shrink: 0;
+  display: inline-block;
+  line-height: 1;
+  width: 12px;
+  text-align: center;
+}
+.today-review-group.open .today-review-arrow {
+  transform: rotate(90deg);
+}
+
+.today-review-header .today-interval-tag {
+  flex-shrink: 0;
+}
+
+.today-review-label {
+  color: var(--iron-gall-ink);
+  font-weight: 600;
+}
+
+.today-review-progress {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  color: var(--faded-ink);
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.today-review-body {
+  display: none;
+  border-top: 1px solid rgba(125,94,16,0.10);
+}
+.today-review-group.open .today-review-body {
+  display: block;
+}
+
+.today-review-body .today-content-item {
+  border-left: none !important;
+  border-radius: 0;
+}
+.today-review-body .today-content-item:last-child {
+  border-bottom: none;
+}
+
+/* ── Wax Seal Checkbox (Today View) ────────────────────── */
+.today-check-label {
+  position: relative;
+  min-width: 44px; min-height: 44px;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.today-check-label input {
+  position: absolute;
+  opacity: 0; width: 0; height: 0;
+}
+.today-check-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px; height: 28px;
+  border: 2px solid rgba(125,94,16,0.35);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 45% 40%, rgba(255,255,255,0.7) 0%, rgba(240,230,210,0.5) 60%, rgba(210,195,165,0.45) 100%);
+  transition: all 0.22s cubic-bezier(0.25,0.1,0.25,1);
+  box-shadow: 0 1px 2px rgba(17,17,34,0.1), inset 0 0 0 1px rgba(255,255,255,0.3);
+}
+.today-check-mark:hover {
+  border-color: var(--brass-polished);
+  background:
+    radial-gradient(circle at 45% 40%, rgba(255,255,255,0.85) 0%, rgba(245,235,215,0.6) 60%, rgba(215,200,170,0.5) 100%);
+  transform: scale(1.1);
+  box-shadow: 0 2px 6px rgba(17,17,34,0.15);
+}
+.today-check-label input:checked + .today-check-mark {
+  background:
+    radial-gradient(circle at 40% 35%, #c04040 0%, #a03030 40%, #751515 80%, #5a0a0a 100%);
+  border-color: #751515;
+  box-shadow:
+    0 2px 5px rgba(117,21,21,0.32),
+    inset 0 1px 1px rgba(255,255,255,0.2),
+    inset 0 -2px 3px rgba(0,0,0,0.2);
+  animation: waxSealStamp 0.35s cubic-bezier(0.25,0.1,0.25,1);
+}
+@keyframes waxSealStamp {
+  0%   { transform: scale(1); }
+  35%  { transform: scale(0.82); }
+  65%  { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+.today-check-label input:checked + .today-check-mark::after {
+  content: '✓';
+  color: rgba(255,255,255,0.9);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+/* Progress footer */
+.today-progress {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 24px 12px 56px;
+  border-top: 1px solid rgba(17,17,34,0.08);
+  background: rgba(255,255,255,0.15);
+  font-family: "Crimson Text", serif;
+  font-size: 13px;
+  color: var(--faded-ink);
+  font-style: italic;
+  margin-top: 2px;
+}
+.today-bar-wrap {
+  flex: 1; height: 5px;
+  background: rgba(232,213,163,0.6);
+  border-radius: 3px;
+  border: 1px solid rgba(125,94,16,0.2);
+  overflow: hidden;
+  position: relative;
+}
+.today-bar-wrap::before {
+  content: '';
+  position: absolute; left: -2px; top: -2px;
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #e84040, #a02020);
+  border: 1px solid rgba(125,94,16,0.4);
+  z-index: 2;
+}
+.today-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #a02020, #d03030);
+  border-radius: 2px;
+  transition: width 0.55s ease;
+  margin-left: 3px;
+}
+
+/* Focus mode button & toggle */
+.btn-today-focus { font-weight: 700; }
+.btn-today-focus.active {
+  background:
+    linear-gradient(180deg, #a03030 0%, #751515 50%, #5a0a0a 100%);
+  color: #fdf5ec;
+  border-color: #4a0505;
+  box-shadow:
+    0 3px 8px rgba(117,21,21,0.3),
+    inset 0 1px 0 rgba(255,255,255,0.12);
+}
+
+/* Notification */
+.notify-group { display: flex; align-items: center; gap: 6px; margin-left: auto; }
+.notify-time {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  padding: 6px 10px;
+  border: 1px solid rgba(125,94,16,0.3);
+  border-radius: 1px;
+  background: rgba(255,255,255,0.45);
+  color: var(--iron-gall-ink);
+  outline: none;
+  width: 110px;
+  box-shadow: inset 0 1px 2px rgba(17,17,34,0.05);
+}
+.notify-time:focus { border-color: var(--brass-polished); }
+.btn-notify.active {
+  background:
+    linear-gradient(180deg, #151f2b 0%, #0b1018 50%, #151f2b 100%);
+  color: #e0d8c8;
+  border-color: #080c12;
+  box-shadow:
+    0 3px 8px rgba(17,17,34,0.25),
+    inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+/* Focus mode: hide non-today rows */
+.table-wrap.focus-mode tbody tr:not(.row-today):not(.month-sep) { display: none; }
+.table-wrap.focus-mode tbody .month-sep { display: none; }
+.table-wrap.focus-mode .check-item label[data-tip]:hover::after {
+  bottom: auto; top: calc(100% + 5px);
+}
+
+/* ── Content Editor Panel ──────────────────────────────── */
+.content-panel { display: none; }
+.content-panel.open { display: block; }
+.content-panel .panel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 24px;
+  background: rgba(232,213,163,0.45);
+  border-bottom: 1px solid rgba(17,17,34,0.08);
+}
+.content-panel .panel-header h3 {
+  font-family: "Playfair Display", serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--iron-gall-ink);
+}
+.content-panel .panel-body {
+  padding: 16px 24px;
+  max-height: 50vh;
+  overflow-y: auto;
+  /* Hand-ruled notebook lines */
+  background-image:
+    repeating-linear-gradient(0deg,
+      transparent, transparent 30px,
+      rgba(17,17,34,0.035) 30px, rgba(17,17,34,0.035) 31px
+    );
+}
+.content-panel .day-group { margin-bottom: 14px; }
+.content-panel .day-group-title {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--brass-tarnished);
+  margin-bottom: 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px dotted rgba(17,17,34,0.12);
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  user-select: none;
+}
+.content-panel .item-row {
+  display: flex; align-items: center; gap: 10px; padding: 3px 0;
+}
+.content-panel .item-row .item-num {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px; font-weight: 700;
+  color: var(--faded-ink);
+  min-width: 28px; text-align: right;
+}
+.content-panel .item-row input {
+  flex: 1; padding: 5px 10px;
+  border: 1px solid rgba(17,17,34,0.1);
+  border-radius: 1px;
+  font-size: 13px; font-family: "Crimson Text", "Noto Serif SC", serif;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.45) 0%, rgba(240,235,220,0.35) 100%);
+  color: var(--iron-gall-ink);
+  transition: var(--transition);
+  box-shadow: inset 0 1px 2px rgba(17,17,34,0.04);
+}
+.content-panel .item-row input:focus {
+  outline: none;
+  border-color: var(--brass-polished);
+  background: rgba(255,255,255,0.75);
+  box-shadow: 0 0 0 2px rgba(163,120,10,0.1);
+}
+
+/* ── Table — Laboratory Observation Chart ──────────────── */
+.table-wrap {
+  overflow: auto;
+  max-height: 65vh;
+  /* Red margin rule — bolder, like a vintage ledger */
+  border-left: 2px solid rgba(180,50,50,0.18);
+  padding-left: 0;
+}
+.table-wrap table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1120px;
+  font-size: 12px;
+  font-family: "Crimson Text", "JetBrains Mono", "Noto Serif SC", serif;
+}
+.table-wrap thead { position: sticky; top: 0; z-index: 2; }
+.table-wrap th {
+  background:
+    linear-gradient(180deg, rgba(242,223,184,0.94) 0%, rgba(230,207,154,0.90) 100%);
+  border-bottom: 2px solid rgba(125,94,16,0.42);
+  padding: 11px 6px;
+  text-align: center;
+  font-family: "JetBrains Mono", monospace;
+  font-weight: 600;
+  font-size: 11px;
+  white-space: nowrap;
+  color: var(--faded-ink);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.table-wrap td {
+  border-bottom: 1px solid rgba(17,17,34,0.06);
+  padding: 8px 5px;
+  vertical-align: top;
+  text-align: center;
+}
+.table-wrap tbody tr { transition: background 0.15s; }
+.table-wrap tbody tr:hover { background: rgba(163,120,10,0.06); }
+
+/* Today row — stronger vermillion ink margin highlight */
+.row-today {
+  background: rgba(160,48,48,0.06) !important;
+  box-shadow: inset 5px 0 0 var(--vermillion);
+}
+.row-today td:first-child {
+  font-weight: 700;
+  color: var(--vermillion-ink);
+}
+
+/* Month separator — decorative rule */
+.month-sep td {
+  background:
+    linear-gradient(180deg, rgba(230,207,154,0.6) 0%, rgba(217,189,122,0.5) 100%) !important;
+  color: var(--iron-gall-ink);
+  font-family: "Playfair Display", serif;
+  font-size: 12px;
+  font-weight: 700;
+  font-style: italic;
+  padding: 10px 6px;
+  letter-spacing: 5px;
+  text-align: center;
+  border-bottom: 1px solid rgba(125,94,16,0.2);
+}
+
+.col-seq  { width: 36px; font-family: "JetBrains Mono", monospace; font-size: 11px; color: var(--faded-ink); }
+.col-date { width: 118px; font-size: 11px; font-family: "JetBrains Mono", monospace; color: var(--faded-ink); }
+.col-learn { width: 190px; text-align: left !important; padding-left: 12px !important; }
+
+/* Review column watercolor washes */
+.col-r1  { background: var(--wash-1); }
+.col-r2  { background: var(--wash-2); }
+.col-r4  { background: var(--wash-4); }
+.col-r7  { background: var(--wash-7); }
+.col-r15 { background: var(--wash-15); }
+.col-r30 { background: var(--wash-30); }
+
+/* ── Learning items ────────────────────────────────────── */
+.learn-list { display: flex; flex-direction: column; gap: 1px; }
+.learn-item {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; padding: 2px 6px; border-radius: 1px;
+  cursor: pointer; transition: var(--transition);
+}
+.learn-item:hover { background: rgba(17,17,34,0.03); }
+.learn-item .idx {
+  font-family: "JetBrains Mono", monospace;
+  font-weight: 700; color: var(--faded-ink);
+  min-width: 24px; font-size: 10px; text-align: right;
+}
+.learn-item .txt { flex: 1; color: var(--iron-gall-ink); font-size: 12px; }
+.learn-item .txt.empty { color: var(--ink-faint); font-style: italic; }
+.learn-item input.learn-edit {
+  flex: 1; border: none;
+  border-bottom: 1px dotted rgba(17,17,34,0.2);
+  background: transparent; font-family: inherit; font-size: 12px;
+  padding: 1px 4px; color: var(--iron-gall-ink);
+}
+.learn-item input.learn-edit:focus {
+  outline: none; border-bottom-color: var(--brass-polished);
+  background: rgba(255,255,255,0.4);
+}
+
+/* ── Table Checkboxes — Data-point Toggles ────────────── */
+.check-items { display: flex; flex-wrap: wrap; gap: 3px; justify-content: center; }
+.check-item { position: relative; }
+.check-item input { position: absolute; opacity: 0; width: 0; height: 0; }
+.check-item label {
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  min-width: 44px; min-height: 44px; line-height: 1.2; padding: 4px 8px;
+  text-align: center; font-size: 11px;
+  font-family: "JetBrains Mono", monospace;
+  font-weight: 500;
+  cursor: pointer;
+  background: rgba(255,252,245,0.45);
+  border: 1px solid rgba(17,17,34,0.12);
+  user-select: none;
+  transition: all 0.18s;
+  position: relative;
+  border-radius: 1px;
+}
+.check-item label:hover {
+  background: rgba(255,255,255,0.75);
+  border-color: rgba(17,17,34,0.25);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(17,17,34,0.08);
+}
+.check-item input:checked + label {
+  background:
+    linear-gradient(180deg, #336b44 0%, #255a32 50%, #184a22 100%);
+  color: #f0f5e8;
+  border-color: #143a1c;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.18), 0 2px 4px rgba(35,107,66,0.3);
+}
+
+/* Tooltip — marginal annotation */
+.check-item label[data-tip]:hover::after {
+  content: attr(data-tip);
+  position: absolute; bottom: calc(100% + 5px); left: 50%; transform: translateX(-50%);
+  background: var(--iron-gall-ink);
+  color: var(--parchment-base);
+  font-family: "Crimson Text", "Noto Serif SC", serif;
+  font-size: 11px; font-weight: 400;
+  padding: 4px 10px; border-radius: 1px;
+  white-space: nowrap; z-index: 10;
+  pointer-events: none;
+  box-shadow: 0 2px 10px rgba(17,17,34,0.3);
+  letter-spacing: 0;
+}
+
+.cell-empty { color: var(--ink-faint); font-size: 16px; line-height: 24px; font-style: italic; }
+.cell-done { background: rgba(35,107,66,0.06); }
+
+/* ── Legend — Specimen Key ─────────────────────────────── */
+.legend {
+  display: flex; flex-wrap: wrap; gap: 12px;
+  padding: 14px 22px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+}
+.legend-item { display: inline-flex; align-items: center; gap: 6px; color: var(--faded-ink); letter-spacing: 0.5px; }
+.legend-dot {
+  width: 10px; height: 10px;
+  border-radius: 1px;
+  border: 1px solid rgba(17,17,34,0.12);
+  flex-shrink: 0;
+}
+
+/* ── Toast — Slip of Paper ─────────────────────────────── */
+.toast {
+  position: fixed; bottom: 36px; left: 50%; transform: translateX(-50%);
+  background: var(--iron-gall-ink);
+  color: var(--parchment-base);
+  padding: 10px 28px;
+  font-family: "JetBrains Mono", "Crimson Text", monospace;
+  font-size: 11px; font-weight: 500; letter-spacing: 1px;
+  z-index: 999; opacity: 0; transition: opacity 0.35s; pointer-events: none;
+  box-shadow: 0 4px 20px rgba(17,17,34,0.35);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 1px;
+}
+.toast.show { opacity: 1; }
+
+/* ── Scrollbar — Brass Rail & Wooden Slider ────────────── */
+::-webkit-scrollbar { width: 12px; height: 12px; }
+::-webkit-scrollbar-track {
+  background:
+    linear-gradient(90deg, rgba(17,17,34,0.06) 0%, rgba(230,207,154,0.4) 50%, rgba(17,17,34,0.06) 100%);
+  border-left: 1px solid rgba(17,17,34,0.08);
+}
+::-webkit-scrollbar-thumb {
+  background:
+    linear-gradient(180deg, #a88460 0%, #8a6c48 30%, #6b4e30 70%, #8a6c48 100%);
+  border-radius: 4px;
+  border: 1px solid rgba(125,94,16,0.35);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -1px 3px rgba(0,0,0,0.14);
+}
+::-webkit-scrollbar-thumb:hover {
+  background:
+    linear-gradient(180deg, #b89070 0%, #9a7850 30%, #7a5a38 70%, #9a7850 100%);
+}
+::-webkit-scrollbar-corner { background: rgba(230,207,154,0.35); }
+
+/* ── Stamp Celebration Overlay ─────────────────────────── */
+.stamp-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: none; z-index: 9999;
+  opacity: 0;
+}
+.stamp-overlay.fire {
+  animation: stampOverlayAnim 2s ease-out forwards;
+}
+.stamp-seal {
+  position: relative;
+  width: 190px; height: 190px;
+  display: flex; align-items: center; justify-content: center;
+  border: 8px solid var(--vermillion);
+  border-radius: 20px;
+  background: rgba(160,48,48,0.08);
+  box-shadow:
+    0 0 0 5px rgba(160,48,48,0.15),
+    0 0 0 10px rgba(160,48,48,0.06),
+    inset 0 0 0 3px rgba(160,48,48,0.08);
+}
+.stamp-seal::after {
+  content: '';
+  position: absolute; inset: 12px;
+  border: 2px solid rgba(160,48,48,0.35);
+  border-radius: 12px;
+  pointer-events: none;
+}
+.stamp-text {
+  font-family: "Ma Shan Zheng", "STKaiti", "KaiTi", cursive;
+  font-size: 52px;
+  color: var(--vermillion-ink);
+  line-height: 1.15;
+  text-align: center;
+  letter-spacing: 3px;
+  position: relative;
+  z-index: 1;
+  text-shadow: 0 2px 4px rgba(117,21,21,0.2);
+}
+@keyframes stampOverlayAnim {
+  0%   { opacity: 0; transform: scale(0.25) rotate(-28deg); }
+  15%  { opacity: 1; transform: scale(1.25) rotate(-16deg); }
+  28%  { opacity: 1; transform: scale(0.88) rotate(-11deg); }
+  42%  { opacity: 1; transform: scale(1.06) rotate(-14deg); }
+  55%  { opacity: 1; transform: scale(0.97) rotate(-13deg); }
+  68%  { opacity: 1; transform: scale(1) rotate(-13deg); }
+  82%  { opacity: 0.7; transform: scale(1) rotate(-13deg); }
+  100% { opacity: 0; transform: scale(1) rotate(-13deg); }
+}
+
+/* ── Firework Celebration ──────────────────────────────── */
+.firework-side {
+  position: fixed; top: 0; bottom: 0;
+  width: 220px; pointer-events: none; z-index: 9998;
+  display: flex; align-items: center; justify-content: center;
+}
+.firework-left  { left: 20px; }
+.firework-right { right: 20px; }
+.firework-burst { position: absolute; width: 0; height: 0; }
+.firework-particle {
+  position: absolute;
+  border-radius: 50%;
+  animation: fireworkFly var(--dur) ease-out var(--delay) both;
+}
+@keyframes fireworkFly {
+  0%   { transform: translate(0, 0) scale(1); opacity: 1; }
+  60%  { opacity: 0.9; }
+  100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+}
+.firework-particle.spark {
+  animation: sparkleFly var(--dur) ease-out var(--delay) both;
+  border-radius: 1px;
+}
+@keyframes sparkleFly {
+  0%   { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 1; }
+  100% { transform: translate(var(--tx), var(--ty)) scale(0.3) rotate(360deg); opacity: 0; }
+}
+
+/* ── Print — Clean Vintage Look ────────────────────────── */
+@media print {
+  body {
+    background: #fff !important;
+    background-image: none !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  body::before, body::after { display: none !important; }
+  .app { max-width: none; padding: 0; }
+  .card { box-shadow: none; border: 1px solid #ccc; border-radius: 0; margin-bottom: 6px; }
+  .card::before, .card::after { display: none; }
+  .controls, .stats, .legend, .content-panel, #btnEditContent, #editHint { display: none !important; }
+  .header::before, .header::after { display: none; }
+  .table-wrap { max-height: none; overflow: visible; border-left: none; }
+  .table-wrap table { font-size: 7pt; min-width: auto; }
+  .table-wrap thead { display: table-header-group; }
+  .table-wrap th { background: #f0ede5; }
+  tr { page-break-inside: avoid; break-inside: avoid; }
+  .col-r1, .col-r2, .col-r4, .col-r7, .col-r15, .col-r30 { background: none !important; border-left: 2px solid #ddd; }
+  .check-item input:checked + label { background: none; color: #3d5a48; border: 2px solid #3d5a48; box-shadow: none; }
+  .row-today { background: none !important; box-shadow: inset 3px 0 0 #333; }
+  .learn-item input.learn-edit { border-bottom: none; }
+  @page { size: landscape; margin: 8mm; }
+}
+
+/* ── Responsive — Pocket Notebook ──────────────────────── */
+@media (max-width: 768px) {
+  .app { padding: 10px; }
+  .header h1 { font-size: 24px; }
+  .control-row { gap: 8px; }
+  .field input { width: 100%; }
+  .btn { padding: 8px 14px; font-size: 11px; }
+}
+
+/* ── Page-load Ink-bleed Effect ────────────────────────── */
+@keyframes inkBleed {
+  0%   { opacity: 0; filter: blur(6px); transform: scale(0.97); }
+  40%  { opacity: 0.5; filter: blur(3px); }
+  100% { opacity: 1; filter: blur(0); transform: scale(1); }
+}
+.card, .header {
+  animation: inkBleed 0.9s ease-out both;
+}
+.header { animation-delay: 0.1s; }
+.card:nth-of-type(1) { animation-delay: 0.18s; }
+.card:nth-of-type(2) { animation-delay: 0.26s; }
+.card:nth-of-type(3) { animation-delay: 0.34s; }
+.card:nth-of-type(4) { animation-delay: 0.42s; }
+.card:nth-of-type(5) { animation-delay: 0.50s; }
+
+/* ── Pencil Scratch Underlines ─────────────────────────── */
+.today-label, .stats .streak-badge {
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(17,17,34,0.12);
+  padding-bottom: 2px;
+}
+
+/* ── Page Fold Shadow — right edge ─────────────────────── */
+.app::after {
+  content: '';
+  position: fixed; right: 0; top: 0; bottom: 0;
+  width: 18px;
+  background: linear-gradient(90deg, transparent, rgba(17,17,34,0.04) 40%, rgba(17,17,34,0.02) 100%);
+  pointer-events: none; z-index: 0;
+}
+
+/* ── Focus States — Keyboard Navigation ────────────────── */
+.btn:focus-visible,
+.field input:focus-visible,
+.field select:focus-visible,
+.notify-time:focus-visible,
+.check-item input:focus-visible + label,
+.today-check-label input:focus-visible + .today-check-mark,
+.content-panel .item-row input:focus-visible,
+.learn-item input.learn-edit:focus-visible {
+  outline: 2px solid var(--reagent-blue);
+  outline-offset: 2px;
+}
+.check-item input:focus-visible + label {
+  border-color: var(--reagent-blue);
+  box-shadow: 0 0 0 2px rgba(60,112,154,0.25);
+}
+.today-check-label input:focus-visible + .today-check-mark {
+  border-color: var(--reagent-blue);
+  box-shadow: 0 0 0 2px rgba(60,112,154,0.25);
+}
+
+/* ── Review Timer — Chronometer ──────────────────────────── */
+.timer-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 16px 24px;
+  border-top: 1px solid rgba(125,94,16,0.12);
+}
+.btn-timer {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 32px;
+  font-family: "JetBrains Mono", "Crimson Text", "Noto Serif SC", monospace;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  white-space: nowrap;
+  user-select: none;
+  transition: all 0.22s cubic-bezier(0.25,0.1,0.25,1);
+  /* Same polished brass as .btn-primary */
+  background:
+    linear-gradient(180deg, #c89830 0%, #a3780a 30%, #8a6206 60%, #a3780a 100%);
+  color: #100c02;
+  border-color: #7d5e10;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.18);
+  box-shadow:
+    0 3px 8px rgba(17,17,34,0.22),
+    0 1px 2px rgba(17,17,34,0.12),
+    inset 0 1px 0 rgba(255,255,255,0.22),
+    inset 0 -2px 5px rgba(0,0,0,0.15);
+}
+.btn-timer:hover {
+  background:
+    linear-gradient(180deg, #d8a840 0%, #b88610 30%, #9a6f0c 60%, #b88610 100%);
+  box-shadow:
+    0 4px 14px rgba(17,17,34,0.26),
+    0 2px 4px rgba(17,17,34,0.14),
+    inset 0 1px 0 rgba(255,255,255,0.28),
+    inset 0 -2px 4px rgba(0,0,0,0.12);
+  transform: translateY(-1px);
+}
+.btn-timer:active {
+  transform: translateY(1px);
+  box-shadow:
+    0 1px 3px rgba(17,17,34,0.18),
+    inset 0 2px 6px rgba(0,0,0,0.18),
+    inset 0 -1px 0 rgba(255,255,255,0.12);
+}
+/* Running — deep bottle-green */
+.btn-timer.running {
+  background:
+    linear-gradient(180deg, #2d5535 0%, #1f3d25 30%, #152e1a 60%, #1f3d25 100%);
+  color: #d8e8d0;
+  border-color: #142818;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.2);
+  box-shadow:
+    0 3px 8px rgba(17,17,34,0.22),
+    inset 0 1px 0 rgba(255,255,255,0.1),
+    inset 0 -2px 5px rgba(0,0,0,0.15);
+}
+.btn-timer.running:hover {
+  background:
+    linear-gradient(180deg, #356840 0%, #264d30 30%, #1c3822 60%, #264d30 100%);
+  transform: translateY(-1px);
+}
+/* Done — muted green, non-interactive */
+.btn-timer.done {
+  background:
+    linear-gradient(180deg, rgba(35,107,66,0.22) 0%, rgba(35,107,66,0.14) 100%);
+  color: #236b42;
+  border-color: rgba(35,107,66,0.35);
+  text-shadow: none;
+  box-shadow: none;
+  cursor: default;
+  pointer-events: none;
+}
+.timer-elapsed {
+  font-family: "JetBrains Mono", monospace;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--iron-gall-ink);
+  min-width: 70px;
+  text-align: center;
+}
+.timer-elapsed.running { color: #1f3d25; }
+.timer-elapsed.done { color: #236b42; }
+
+/* ── Stats Modal — Ledger Book ───────────────────────────── */
+.stats-modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(17,17,34,0.45);
+  z-index: 9990;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.28s;
+}
+.stats-modal-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.stats-modal {
+  background:
+    linear-gradient(175deg, rgba(255,250,240,0.98) 0%, rgba(242,223,184,0.98) 40%, rgba(230,207,154,0.96) 100%);
+  border: 1px solid rgba(125,94,16,0.35);
+  border-radius: 2px;
+  box-shadow:
+    0 8px 40px rgba(17,17,34,0.22),
+    0 2px 8px rgba(17,17,34,0.10),
+    inset 0 0 0 1px rgba(255,255,255,0.3);
+  max-width: 520px;
+  width: 90vw;
+  max-height: 75vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.stats-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 22px;
+  border-bottom: 1px solid rgba(125,94,16,0.2);
+  font-family: "Playfair Display", serif;
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--iron-gall-ink);
+}
+.stats-modal-close {
+  width: 36px; height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  color: var(--faded-ink);
+  border: 1px solid rgba(125,94,16,0.2);
+  border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+  transition: all 0.2s;
+  line-height: 1;
+}
+.stats-modal-close:hover {
+  background: rgba(160,48,48,0.1);
+  border-color: rgba(160,48,48,0.3);
+  color: var(--vermillion-ink);
+}
+.stats-modal-body {
+  padding: 16px 22px;
+  overflow-y: auto;
+  flex: 1;
+}
+.stats-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: "JetBrains Mono", "Crimson Text", monospace;
+  font-size: 12px;
+}
+.stats-table th {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 2px solid rgba(125,94,16,0.25);
+  color: var(--faded-ink);
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.stats-table td {
+  padding: 7px 10px;
+  border-bottom: 1px solid rgba(125,94,16,0.08);
+  color: var(--iron-gall-ink);
+  font-variant-numeric: tabular-nums;
+}
+.stats-table .dur-col { text-align: right; }
+.stats-table th.dur-col { text-align: right; }
+.stats-table tbody tr:hover { background: rgba(163,120,10,0.04); }
+.stats-table .cumulative-row td {
+  border-top: 2px solid rgba(125,94,16,0.25);
+  font-weight: 700;
+  color: var(--vermillion-ink);
+  font-size: 13px;
+  padding-top: 10px;
+}
+.stats-empty {
+  text-align: center;
+  color: var(--ink-faint);
+  font-style: italic;
+  padding: 30px 0;
+  font-family: "Crimson Text", serif;
+  font-size: 14px;
+}
+
+/* ── Reduced Motion — Accessibility ────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .card, .header { animation: none; opacity: 1; filter: none; transform: none; }
+  .today-content-item { animation: none; opacity: 1; transform: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+<header class="header">
+  <h1>艾宾浩斯记忆曲线</h1>
+  <span class="ornament">&#x2767; &nbsp; 背诵计划表 &nbsp; &#x2767;</span>
+  <div class="subtitle">
+    <span>Hermann Ebbinghaus &middot; 1885</span>
+    <span class="badge">1d</span><span class="badge">2d</span><span class="badge">4d</span>
+    <span class="badge">7d</span><span class="badge">15d</span><span class="badge">30d</span>
+  </div>
+</header>
+
+<div class="card controls" id="controls">
+  <div class="control-row">
+    <div class="field">
+      <label>开始日期</label>
+      <input type="date" id="startDate">
+    </div>
+    <div class="field">
+      <label>每日项数</label>
+      <input type="number" id="itemsPerDay" value="5" min="1" max="200">
+    </div>
+    <div class="field">
+      <label>计划天数</label>
+      <input type="number" id="totalDays" value="30" min="1" max="365">
+    </div>
+    <button class="btn btn-primary" id="btnGenerate">生成背诵表</button>
+    <button class="btn btn-accent" id="btnEditContent" style="display:none;">编辑内容</button>
+  </div>
+  <div class="control-row">
+    <button class="btn btn-outline" id="btnToggle" style="display:none;">全部折叠</button>
+    <button class="btn btn-outline btn-today-focus" id="btnTodayFocus" style="display:none;">&#x25C9; 今日焦点</button>
+    <button class="btn btn-outline" id="btnClear" style="display:none;">清空标记</button>
+    <button class="btn btn-outline" id="btnStats" style="display:none;">&#x1F4CA; 统计时长</button>
+    <span class="notify-group" id="notifyGroup" style="display:none;">
+      <button class="btn btn-outline btn-notify" id="btnNotify" title="每日复习提醒">&#x1F514; 每日提醒</button>
+      <input type="time" id="notifyTime" value="09:00" class="notify-time">
+    </span>
+  </div>
+</div>
+
+<div class="card today-overview" id="todayOverview">
+  <div class="today-header">
+    <span class="today-label">今日任务</span>
+    <span class="today-date" id="todayDateLabel"></span>
+  </div>
+  <div class="timer-row" id="timerRow">
+    <button class="btn-timer" id="btnTimer">&#x23F1; 开始复习</button>
+    <span class="timer-elapsed" id="timerElapsed"></span>
+  </div>
+  <div class="today-grid" id="todayGrid"></div>
+  <div class="today-progress">
+    <span id="todayProgressText"></span>
+    <div class="today-bar-wrap"><div class="today-bar-fill" id="todayBar"></div></div>
+  </div>
+</div>
+
+<div class="card stats" id="stats" style="display:none;">
+  <div class="streak-badge" id="streakBadge">
+    <span class="streak-flame">&#x2767;</span>
+    连续打卡 <span class="streak-num" id="streakNum">0</span> 天
+    <span class="streak-flame">&#x2767;</span>
+  </div>
+  <div class="stat-divider"></div>
+  <div class="stat-item">复习项 <span class="val" id="statTotal">0</span></div>
+  <div class="stat-divider"></div>
+  <div class="stat-item">已完成 <span class="val" id="statDone">0</span></div>
+  <div class="stat-divider"></div>
+  <div class="stat-item">完成率 <span class="val" id="statPct">0%</span></div>
+  <div class="stat-divider"></div>
+  <div class="stat-bar-wrap">
+    <div class="stat-bar-fill" id="statBar" style="width:0%"></div>
+  </div>
+  <span style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--faded-ink);" id="statTime"></span>
+</div>
+
+<div class="card" id="tableCard" style="display:none;">
+  <div class="table-wrap" id="tableWrap">
+    <p style="text-align:center;padding:60px 20px;color:var(--ink-faint);font-style:italic;">请设置参数后点击「生成背诵表」</p>
+  </div>
+</div>
+
+<div class="card content-panel" id="contentPanel">
+  <div class="panel-header">
+    <h3>编辑背诵内容</h3>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-outline btn-sm" id="btnCollapseAllGroups">折叠全部</button>
+      <button class="btn btn-primary btn-sm" id="btnSaveContent">保存</button>
+    </div>
+  </div>
+  <div class="panel-body" id="contentPanelBody">
+    <p style="color:var(--ink-faint);text-align:center;padding:20px;font-style:italic;">请先生成背诵表</p>
+  </div>
+</div>
+
+<div class="card legend" id="legend" style="display:none;">
+  <span style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:var(--faded-ink);margin-right:6px;letter-spacing:1px;">复习周期</span>
+  <span class="legend-item"><span class="legend-dot" style="background:rgba(125,170,135,0.55);"></span>1天后</span>
+  <span class="legend-item"><span class="legend-dot" style="background:rgba(195,155,105,0.55);"></span>2天后</span>
+  <span class="legend-item"><span class="legend-dot" style="background:rgba(110,145,175,0.55);"></span>4天后</span>
+  <span class="legend-item"><span class="legend-dot" style="background:rgba(148,112,162,0.55);"></span>7天后</span>
+  <span class="legend-item"><span class="legend-dot" style="background:rgba(200,180,110,0.55);"></span>15天后</span>
+  <span class="legend-item"><span class="legend-dot" style="background:rgba(185,108,108,0.55);"></span>30天后</span>
+  <span style="margin-left:8px;font-family:'Crimson Text','Noto Serif SC',serif;font-size:11px;font-style:italic;color:var(--faded-ink);" id="editHint"></span>
+</div>
+
+</div><!-- /.app -->
+
+<div class="toast" id="toast"></div>
+
+<div class="stamp-overlay" id="stampOverlay">
+  <div class="stamp-seal">
+    <div class="stamp-border"></div>
+    <span class="stamp-text">背<br>完<br>了</span>
+  </div>
+</div>
+
+<div class="firework-side firework-left" id="fireworkLeft"></div>
+<div class="firework-side firework-right" id="fireworkRight"></div>
+
+<div class="stats-modal-overlay" id="statsModalOverlay">
+  <div class="stats-modal">
+    <div class="stats-modal-header">
+      <span>复习时长统计</span>
+      <span class="stats-modal-close" id="statsModalClose">&times;</span>
+    </div>
+    <div class="stats-modal-body" id="statsModalBody"></div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+const INTERVALS = [1, 2, 4, 7, 15, 30];
+const STORAGE_KEY = 'ebbinghaus_schedule_v2';
+const STORAGE_KEY_LEGACY = 'ebbinghaus_schedule';
+
+function parseLocalDate(str) {
+  const parts = str.split('-').map(Number);
+  return new Date(parts[0], parts[1] - 1, parts[2]);
+}
+
+function formatDate(d) {
+  const w = ['日','一','二','三','四','五','六'];
+  return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日 周${w[d.getDay()]}`;
+}
+
+function dateEqual(a, b) {
+  return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+}
+
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove('show'), 2200);
+}
+
+function playStampSound() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'triangle';
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.frequency.setValueAtTime(150, now);
+    osc.frequency.exponentialRampToValueAtTime(40, now + 0.12);
+    gain.gain.setValueAtTime(0.35, now);
+    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.18);
+    osc.start(now);
+    osc.stop(now + 0.18);
+    const osc2 = ctx.createOscillator();
+    const gain2 = ctx.createGain();
+    osc2.type = 'sine';
+    osc2.frequency.setValueAtTime(300, now);
+    osc2.frequency.exponentialRampToValueAtTime(180, now + 0.08);
+    osc2.connect(gain2);
+    gain2.connect(ctx.destination);
+    gain2.gain.setValueAtTime(0.08, now);
+    gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+    osc2.start(now);
+    osc2.stop(now + 0.12);
+  } catch(e) { /* audio not available */ }
+}
+
+function fireStamp() {
+  const overlay = document.getElementById('stampOverlay');
+  overlay.classList.remove('fire');
+  void overlay.offsetWidth;
+  overlay.classList.add('fire');
+  playStampSound();
+  launchFireworks();
+}
+
+function launchFireworks() {
+  const colors = [
+    '#c04040', '#d4745c', '#9b2c2c',
+    '#b8935a', '#d4b97c', '#8b6d3b',
+    '#3d5a48', '#5c8a6a',
+    '#2c3a4a', '#4a637a',
+    '#e8c96a', '#d4a84b',
+  ];
+  const sides = [
+    { el: document.getElementById('fireworkLeft'), cx: 100, cy: 200 },
+    { el: document.getElementById('fireworkRight'), cx: 100, cy: 180 },
+  ];
+  const allFrags = [];
+  for (const side of sides) {
+    const frag = document.createDocumentFragment();
+    for (let b = 0; b < 3; b++) {
+      const burstCX = side.cx + (Math.random() - 0.5) * 60;
+      const burstCY = side.cy + (Math.random() - 0.5) * 80 + b * 100;
+      const count = 18 + Math.floor(Math.random() * 14);
+      for (let i = 0; i < count; i++) {
+        const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.4;
+        const dist = 60 + Math.random() * 140;
+        const tx = Math.cos(angle) * dist;
+        const ty = Math.sin(angle) * dist;
+        const particle = document.createElement('div');
+        particle.className = Math.random() < 0.3 ? 'firework-particle spark' : 'firework-particle';
+        particle.style.cssText = `
+          --tx: ${tx.toFixed(0)}px; --ty: ${ty.toFixed(0)}px;
+          --dur: ${(0.8 + Math.random() * 0.9).toFixed(2)}s;
+          --delay: ${(b * 0.12 + Math.random() * 0.2).toFixed(2)}s;
+          left: ${burstCX.toFixed(0)}px; top: ${burstCY.toFixed(0)}px;
+          width: ${(6 + Math.random() * 10).toFixed(0)}px;
+          height: ${(6 + Math.random() * 10).toFixed(0)}px;
+          background: ${colors[Math.floor(Math.random() * colors.length)]};
+        `;
+        frag.appendChild(particle);
+      }
+    }
+    side.el.innerHTML = '';
+    side.el.appendChild(frag);
+    allFrags.push(frag);
+  }
+  setTimeout(() => {
+    for (const side of sides) side.el.innerHTML = '';
+  }, 2200);
+}
+
+function range(a, b) {
+  const arr = [];
+  for (let i = a; i <= b; i++) arr.push(i);
+  return arr;
+}
+
+function generateSchedule(startDateStr, itemsPerDay, totalDays) {
+  const startDate = parseLocalDate(startDateStr);
+  const schedule = [];
+  for (let d = 0; d < totalDays; d++) {
+    const date = new Date(startDate.getTime());
+    date.setDate(startDate.getDate() + d);
+    const newStart = d * itemsPerDay + 1;
+    const newEnd = (d + 1) * itemsPerDay;
+    const reviews = {};
+    for (const I of INTERVALS) {
+      const src = d - I;
+      reviews[I] = src >= 0 ? range(src * itemsPerDay + 1, (src + 1) * itemsPerDay) : [];
+    }
+    schedule.push({ dayIndex: d + 1, date, newItems: range(newStart, newEnd), reviews });
+  }
+  return schedule;
+}
+
+function loadState() {
+  try {
+    let raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const data = JSON.parse(raw);
+      if (data && data.version === 2) return data;
+    }
+    raw = localStorage.getItem(STORAGE_KEY_LEGACY);
+    if (raw) {
+      const data = JSON.parse(raw);
+      if (data && data.version === 1) {
+        return { version: 2, config: data.config, completions: data.completions || {}, contents: {} };
+      }
+    }
+    return null;
+  } catch (e) { return null; }
+}
+
+function saveState(config, completions, contents) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      version: 2, config, completions: completions || {}, contents: contents || {}
+    }));
+  } catch (e) { toast('存储空间不足'); }
+}
+
+// ── Timer Data ────────────────────────────────────────────
+const DURATIONS_KEY = 'ebbinghaus_durations';
+const TIMER_KEY = 'ebbinghaus_timer';
+
+function getDateKey(d) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function loadDurations() {
+  try { return JSON.parse(localStorage.getItem(DURATIONS_KEY)) || {}; }
+  catch(e) { return {}; }
+}
+
+function saveDurations(dur) {
+  try { localStorage.setItem(DURATIONS_KEY, JSON.stringify(dur)); }
+  catch(e) {}
+}
+
+function loadTimerState() {
+  try { return JSON.parse(localStorage.getItem(TIMER_KEY)) || null; }
+  catch(e) { return null; }
+}
+
+function saveTimerState(state) {
+  if (state) {
+    try { localStorage.setItem(TIMER_KEY, JSON.stringify(state)); }
+    catch(e) {}
+  } else {
+    try { localStorage.removeItem(TIMER_KEY); }
+    catch(e) {}
+  }
+}
+
+let timerInterval = null;
+let timerRunning = false;
+
+function formatDuration(seconds) {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${m}:${String(s).padStart(2,'0')}`;
+}
+
+function getTimerElapsed() {
+  const state = loadTimerState();
+  if (!state || !state.startTime) return 0;
+  return Math.floor((Date.now() - state.startTime) / 1000);
+}
+
+function updateTimerDisplay() {
+  const btn = document.getElementById('btnTimer');
+  const elapsed = document.getElementById('timerElapsed');
+  if (!btn || !elapsed) return;
+
+  const state = loadTimerState();
+  const todayKey = getDateKey(new Date());
+
+  if (state && state.date === todayKey && !state.stopped) {
+    // Timer is running
+    const sec = getTimerElapsed();
+    btn.textContent = '⏱ 复习中';
+    btn.className = 'btn-timer running';
+    elapsed.textContent = formatDuration(sec);
+    elapsed.className = 'timer-elapsed running';
+    timerRunning = true;
+    startTimerTick();
+  } else if (state && state.date === todayKey && state.stopped) {
+    // Timer stopped (all completed today)
+    btn.textContent = '✓ 复习完成';
+    btn.className = 'btn-timer done';
+    elapsed.textContent = formatDuration(state.duration || 0);
+    elapsed.className = 'timer-elapsed done';
+    timerRunning = false;
+  } else {
+    // No active timer for today
+    btn.textContent = '⏱ 开始复习';
+    btn.className = 'btn-timer';
+    elapsed.textContent = '';
+    elapsed.className = 'timer-elapsed';
+    timerRunning = false;
+  }
+}
+
+function startTimer() {
+  const todayKey = getDateKey(new Date());
+  const state = { startTime: Date.now(), date: todayKey, stopped: false, duration: 0 };
+  saveTimerState(state);
+  updateTimerDisplay();
+  startTimerTick();
+}
+
+function stopTimer(duration) {
+  const todayKey = getDateKey(new Date());
+  const state = { startTime: 0, date: todayKey, stopped: true, duration: duration };
+  saveTimerState(state);
+
+  // Save duration
+  const durs = loadDurations();
+  durs[todayKey] = duration;
+  saveDurations(durs);
+
+  updateTimerDisplay();
+  stopTimerTick();
+}
+
+function startTimerTick() {
+  stopTimerTick();
+  timerInterval = setInterval(function() {
+    const state = loadTimerState();
+    if (!state || state.stopped) { stopTimerTick(); updateTimerDisplay(); return; }
+    const elapsed = document.getElementById('timerElapsed');
+    if (elapsed) elapsed.textContent = formatDuration(getTimerElapsed());
+  }, 1000);
+}
+
+function stopTimerTick() {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+}
+
+function renderTable(schedule, completions, contents) {
+  const today = new Date();
+  const tbody = document.getElementById('tableBody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+  let lastMonth = -1;
+  const months = ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'];
+  for (const row of schedule) {
+    const m = row.date.getMonth();
+    if (m !== lastMonth && lastMonth !== -1) {
+      const sep = document.createElement('tr');
+      sep.className = 'month-sep';
+      sep.innerHTML = `<td colspan="9">&#x2767; &nbsp; ${months[m]} &nbsp; &#x2767;</td>`;
+      tbody.appendChild(sep);
+    }
+    lastMonth = m;
+    tbody.appendChild(renderRow(row, completions, contents, today));
+  }
+}
+
+function renderRow(row, completions, contents, today) {
+  const tr = document.createElement('tr');
+  if (dateEqual(row.date, today)) tr.className = 'row-today';
+
+  const tdSeq = document.createElement('td');
+  tdSeq.textContent = row.dayIndex;
+  tdSeq.className = 'col-seq';
+  tr.appendChild(tdSeq);
+
+  const tdDate = document.createElement('td');
+  tdDate.textContent = formatDate(row.date);
+  tdDate.className = 'col-date';
+  tr.appendChild(tdDate);
+
+  const tdLearn = document.createElement('td');
+  tdLearn.className = 'col-learn';
+  tdLearn.appendChild(buildLearnList(row.newItems, contents));
+  tr.appendChild(tdLearn);
+
+  for (const I of INTERVALS) {
+    const td = document.createElement('td');
+    td.className = `col-r${I}`;
+    const items = row.reviews[I];
+    if (items.length === 0) {
+      td.innerHTML = '<span class="cell-empty">&mdash;</span>';
+    } else {
+      td.appendChild(buildCheckItems(items, I, completions, contents));
+    }
+    tr.appendChild(td);
+  }
+  return tr;
+}
+
+function buildLearnList(itemIds, contents) {
+  const div = document.createElement('div');
+  div.className = 'learn-list';
+  for (const id of itemIds) {
+    const item = document.createElement('div');
+    item.className = 'learn-item';
+    item.innerHTML = `<span class="idx">${id}.</span>
+      <span class="txt ${contents[id] ? '' : 'empty'}">${contents[id] || '点击输入内容…'}</span>`;
+    item.addEventListener('click', () => startInlineEdit(item, id, contents));
+    div.appendChild(item);
+  }
+  return div;
+}
+
+function startInlineEdit(itemEl, id, contents) {
+  const txtSpan = itemEl.querySelector('.txt');
+  const current = contents[id] || '';
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.className = 'learn-edit';
+  input.value = current;
+  input.placeholder = '输入背诵内容…';
+  txtSpan.replaceWith(input);
+  input.focus();
+  input.select();
+  const commit = () => {
+    const val = input.value.trim();
+    if (val) { contents[id] = val; }
+    else { delete contents[id]; }
+    saveState(currentConfig, currentCompletions, contents);
+    const newSpan = document.createElement('span');
+    newSpan.className = `txt ${val ? '' : 'empty'}`;
+    newSpan.textContent = val || '点击输入内容…';
+    input.replaceWith(newSpan);
+  };
+  input.addEventListener('blur', commit);
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') input.blur();
+    if (e.key === 'Escape') { input.value = current; input.blur(); }
+  });
+}
+
+function buildCheckItems(itemIds, interval, completions, contents) {
+  const div = document.createElement('div');
+  div.className = 'check-items';
+  let allDone = true;
+  for (const id of itemIds) {
+    const key = `${id}_${interval}`;
+    const done = !!completions[key];
+    if (!done) allDone = false;
+    const tipAttr = contents[id] ? ` data-tip="${escapeAttr(contents[id])}"` : '';
+    const wrap = document.createElement('span');
+    wrap.className = 'check-item';
+    wrap.innerHTML = `<input type="checkbox" id="cb_${key}" data-item="${id}" data-interval="${interval}" ${done ? 'checked' : ''}>
+      <label for="cb_${key}"${tipAttr}>${id}</label>`;
+    div.appendChild(wrap);
+  }
+  if (allDone && itemIds.length > 0) div.classList.add('cell-done');
+  return div;
+}
+
+function escapeAttr(s) {
+  return s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function renderContentPanel(schedule, contents) {
+  const body = document.getElementById('contentPanelBody');
+  body.innerHTML = '';
+  for (const row of schedule) {
+    const dayEl = document.createElement('div');
+    dayEl.className = 'day-group';
+    const title = document.createElement('div');
+    title.className = 'day-group-title';
+    title.textContent = `Day ${String(row.dayIndex).padStart(2,'0')} — ${formatDate(row.date)}`;
+    title.style.cursor = 'pointer';
+    dayEl.appendChild(title);
+    const itemsDiv = document.createElement('div');
+    itemsDiv.className = 'day-items';
+    for (const id of row.newItems) {
+      const itemRow = document.createElement('div');
+      itemRow.className = 'item-row';
+      itemRow.innerHTML = `<span class="item-num">${id}</span>
+        <input type="text" data-item="${id}" value="${escapeAttr(contents[id] || '')}" placeholder="输入背诵内容…">`;
+      itemsDiv.appendChild(itemRow);
+    }
+    dayEl.appendChild(itemsDiv);
+    body.appendChild(dayEl);
+    title.addEventListener('click', () => {
+      itemsDiv.style.display = itemsDiv.style.display === 'none' ? '' : 'none';
+    });
+  }
+  const debouncedSave = debounce(() => {
+    body.querySelectorAll('input[data-item]').forEach(inp => {
+      const id = parseInt(inp.dataset.item, 10);
+      const val = inp.value.trim();
+      if (val) { contents[id] = val; }
+      else { delete contents[id]; }
+    });
+    saveState(currentConfig, currentCompletions, contents);
+    const sched = generateSchedule(currentConfig.startDate, currentConfig.itemsPerDay, currentConfig.totalDays);
+    renderTable(sched, currentCompletions, contents);
+  }, 400);
+  body.addEventListener('input', e => {
+    if (e.target.dataset.item) debouncedSave();
+  });
+}
+
+function debounce(fn, ms) {
+  let timer;
+  return (...args) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), ms); };
+}
+
+function computeStreak(schedule, completions) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const completeMap = new Map();
+  let latestPastDay = 0;
+
+  for (const row of schedule) {
+    const d = new Date(row.date);
+    d.setHours(0, 0, 0, 0);
+    if (d > today) continue;
+    let total = 0, done = 0;
+    for (const I of INTERVALS) {
+      for (const id of row.reviews[I]) {
+        total++;
+        if (completions[`${id}_${I}`]) done++;
+      }
+    }
+    completeMap.set(row.dayIndex, total > 0 && done === total);
+    if (row.dayIndex > latestPastDay) latestPastDay = row.dayIndex;
+  }
+
+  let start = latestPastDay;
+  if (start > 0 && !completeMap.get(start)) start = start - 1;
+
+  let streak = 0;
+  for (let d = start; d >= 1; d--) {
+    if (completeMap.get(d) === true) streak++;
+    else break;
+  }
+  return streak;
+}
+
+function updateStats(schedule, completions) {
+  let total = 0, done = 0;
+  for (const row of schedule)
+    for (const I of INTERVALS)
+      for (const id of row.reviews[I]) {
+        total++;
+        if (completions[`${id}_${I}`]) done++;
+      }
+  const pct = total === 0 ? 0 : Math.round(done / total * 100);
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statDone').textContent = done;
+  document.getElementById('statPct').textContent = pct + '%';
+  document.getElementById('statBar').style.width = pct + '%';
+  document.getElementById('statTime').textContent = new Date().toLocaleString('zh-CN');
+  document.getElementById('stats').style.display = total > 0 ? 'flex' : 'none';
+
+  const streak = computeStreak(schedule, completions);
+  const badge = document.getElementById('streakBadge');
+  const numEl = document.getElementById('streakNum');
+  const prevStreak = parseInt(numEl.textContent, 10) || 0;
+  badge.style.display = 'flex';
+  badge.style.opacity = streak > 0 ? '1' : '0.4';
+  numEl.textContent = streak;
+  if (streak > prevStreak) {
+    badge.classList.remove('pulse');
+    void badge.offsetWidth;
+    badge.classList.add('pulse');
+  }
+}
+
+let currentConfig = null;
+let currentCompletions = null;
+let currentContents = null;
+
+function onGenerate() {
+  const startDateStr = document.getElementById('startDate').value;
+  const itemsPerDay = parseInt(document.getElementById('itemsPerDay').value, 10);
+  const totalDays = parseInt(document.getElementById('totalDays').value, 10);
+  if (!startDateStr) { toast('请选择开始日期'); return; }
+  if (itemsPerDay < 1 || itemsPerDay > 200) { toast('每日项数为 1-200'); return; }
+  if (totalDays < 1 || totalDays > 365) { toast('天数为 1-365'); return; }
+  const prev = loadState();
+  if (prev && prev.config) {
+    const pc = prev.config;
+    if ((pc.startDate !== startDateStr || pc.itemsPerDay !== itemsPerDay) &&
+        !confirm('修改起始日期或每日项数将重新生成计划，已完成标记可能部分丢失。是否继续？')) return;
+  }
+  const schedule = generateSchedule(startDateStr, itemsPerDay, totalDays);
+  const newCompletions = {}, newContents = {};
+  if (prev) {
+    for (const row of schedule) {
+      for (const I of INTERVALS)
+        for (const id of row.reviews[I]) {
+          const key = `${id}_${I}`;
+          if (prev.completions && prev.completions[key]) newCompletions[key] = true;
+        }
+    }
+    if (prev.contents)
+      for (const row of schedule)
+        for (const id of row.newItems)
+          if (prev.contents[id]) newContents[id] = prev.contents[id];
+  }
+  currentConfig = { startDate: startDateStr, itemsPerDay, totalDays };
+  currentCompletions = newCompletions;
+  currentContents = newContents;
+  buildTableShell();
+  renderTable(schedule, newCompletions, newContents);
+  renderContentPanel(schedule, newContents);
+  updateStats(schedule, newCompletions);
+  saveState(currentConfig, newCompletions, newContents);
+  showAfterGenerate();
+}
+
+function buildTableShell() {
+  document.getElementById('tableWrap').innerHTML = `
+    <table>
+      <thead><tr>
+        <th class="col-seq">No.</th>
+        <th class="col-date">日期</th>
+        <th class="col-learn">今日背诵</th>
+        <th class="col-r1">1天后</th>
+        <th class="col-r2">2天后</th>
+        <th class="col-r4">4天后</th>
+        <th class="col-r7">7天后</th>
+        <th class="col-r15">15天后</th>
+        <th class="col-r30">30天后</th>
+      </tr></thead>
+      <tbody id="tableBody"></tbody>
+    </table>`;
+}
+
+function showAfterGenerate() {
+  document.getElementById('tableCard').style.display = '';
+  document.getElementById('btnToggle').style.display = '';
+  document.getElementById('btnTodayFocus').style.display = '';
+  document.getElementById('btnClear').style.display = '';
+  document.getElementById('btnEditContent').style.display = '';
+  document.getElementById('notifyGroup').style.display = '';
+  document.getElementById('btnStats').style.display = '';
+  document.getElementById('legend').style.display = '';
+  document.getElementById('contentPanel').classList.add('open');
+  document.getElementById('editHint').textContent = '点击表格中「今日背诵」列可编辑内容';
+  document.getElementById('btnToggle').textContent = '全部折叠';
+  if (notifyEnabled) {
+    document.getElementById('btnNotify').classList.add('active');
+    document.getElementById('btnNotify').innerHTML = '&#x1F514; 每日提醒 (开)';
+  }
+}
+
+function isTodayComplete(schedule, completions) {
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  let bestRow = null;
+  for (const row of schedule) {
+    const d = new Date(row.date); d.setHours(0, 0, 0, 0);
+    if (d.getTime() === today.getTime()) { bestRow = row; break; }
+    if (d <= today && (!bestRow || d > new Date(bestRow.date))) bestRow = row;
+  }
+  if (!bestRow) return false;
+  let total = 0, done = 0;
+  for (const I of INTERVALS) {
+    for (const id of bestRow.reviews[I]) {
+      total++;
+      if (completions[`${id}_${I}`]) done++;
+    }
+  }
+  return total > 0 && done === total;
+}
+
+function onCheckbox(e) {
+  const el = e.target;
+  if (el.tagName !== 'INPUT' || !el.dataset.item) return;
+  const s = generateSchedule(currentConfig.startDate, currentConfig.itemsPerDay, currentConfig.totalDays);
+  const wasTodayComplete = isTodayComplete(s, currentCompletions);
+  currentCompletions[`${el.dataset.item}_${el.dataset.interval}`] = el.checked;
+  saveState(currentConfig, currentCompletions, currentContents);
+  const fromOverview = !!el.closest('#todayOverview');
+  const other = fromOverview ? document.getElementById('tableWrap') : document.getElementById('todayOverview');
+  if (other) {
+    const twin = other.querySelector(`input[data-item="${el.dataset.item}"][data-interval="${el.dataset.interval}"]`);
+    if (twin) twin.checked = el.checked;
+  }
+  if (!fromOverview) {
+    const cell = el.closest('.check-items');
+    if (cell) {
+      const allChecked = [...cell.querySelectorAll('input')].every(cb => cb.checked);
+      cell.classList.toggle('cell-done', allChecked);
+    }
+  }
+  if (fromOverview && other) {
+    const twinCell = other.querySelector(`input[data-item="${el.dataset.item}"][data-interval="${el.dataset.interval}"]`)?.closest('.check-items');
+    if (twinCell) {
+      const allChecked = [...twinCell.querySelectorAll('input')].every(cb => cb.checked);
+      twinCell.classList.toggle('cell-done', allChecked);
+    }
+  }
+  const contentItem = el.closest('.today-content-item');
+  if (contentItem) contentItem.classList.toggle('done', el.checked);
+
+  updateStats(s, currentCompletions);
+  if (document.getElementById('todayOverview').classList.contains('open')) {
+    if (fromOverview) {
+      const overview = document.getElementById('todayOverview');
+      const cbs = overview.querySelectorAll('input[data-item]');
+      let t = 0, d = 0;
+      cbs.forEach(cb => { t++; if (cb.checked) d++; });
+      const pct = t === 0 ? 0 : Math.round(d / t * 100);
+      document.getElementById('todayProgressText').textContent = t === 0 ? '今日暂无复习任务' : `已完成 ${d} / ${t}`;
+      document.getElementById('todayBar').style.width = pct + '%';
+
+      // Update per-group progress in accordion header
+      const group = el.closest('.today-review-group');
+      if (group) {
+        const groupCbs = group.querySelectorAll('input[data-item]');
+        let gd = 0;
+        groupCbs.forEach(cb => { if (cb.checked) gd++; });
+        const progEl = group.querySelector('.today-review-progress');
+        if (progEl) progEl.textContent = `${gd}/${groupCbs.length}`;
+
+        // Auto-advance: if group fully done, collapse it and open next incomplete
+        if (gd === groupCbs.length) {
+          group.classList.remove('open');
+          const allGroups = [...overview.querySelectorAll('.today-review-group')];
+          for (const g of allGroups) {
+            if (g === group) continue;
+            const gCbs = g.querySelectorAll('input[data-item]');
+            let gDone = 0;
+            gCbs.forEach(cb => { if (cb.checked) gDone++; });
+            if (gDone < gCbs.length) {
+              g.classList.add('open');
+              break;
+            }
+          }
+        }
+      }
+    } else {
+      renderTodayOverview(s, currentCompletions, currentContents);
+    }
+  }
+  if (el.checked && !wasTodayComplete && isTodayComplete(s, currentCompletions)) {
+    // Auto-stop timer if running
+    const timerState = loadTimerState();
+    if (timerState && !timerState.stopped) {
+      const sec = getTimerElapsed();
+      stopTimer(sec);
+    }
+    fireStamp();
+  }
+}
+
+function renderTodayOverview(schedule, completions, contents) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  let todayRow = null;
+  for (const row of schedule) {
+    const d = new Date(row.date);
+    d.setHours(0, 0, 0, 0);
+    if (d.getTime() === today.getTime()) { todayRow = row; break; }
+  }
+  const overview = document.getElementById('todayOverview');
+  if (!todayRow) { overview.classList.remove('open'); return; }
+  overview.classList.add('open');
+  document.getElementById('todayDateLabel').textContent = formatDate(todayRow.date);
+
+  const grid = document.getElementById('todayGrid');
+  grid.innerHTML = '';
+
+  let animIdx = 0;
+
+  const newSection = document.createElement('div');
+  newSection.className = 'today-section';
+  newSection.innerHTML = '<h4>今日背诵</h4>';
+  const newList = document.createElement('div');
+  newList.className = 'today-item-list';
+  for (const id of todayRow.newItems) {
+    const itemRow = document.createElement('div');
+    itemRow.className = 'today-content-item';
+    itemRow.style.animationDelay = (animIdx++ * 50) + 'ms';
+    itemRow.innerHTML = `
+      <span class="today-item-num">${id}</span>
+      <span class="today-item-text ${contents[id] ? '' : 'empty'}">${contents[id] || '点击「编辑内容」添加背诵内容'}</span>
+    `;
+    newList.appendChild(itemRow);
+  }
+  newSection.appendChild(newList);
+  grid.appendChild(newSection);
+
+  const revSection = document.createElement('div');
+  revSection.className = 'today-section';
+  revSection.innerHTML = '<h4>待复习</h4>';
+
+  const INTERVAL_LABELS = { 1:'1 天前学过', 2:'2 天前学过', 4:'4 天前学过', 7:'7 天前学过', 15:'15 天前学过', 30:'30 天前学过' };
+  let todayTotal = 0, todayDone = 0;
+  let firstIncompleteFound = false;
+
+  for (const I of INTERVALS) {
+    const items = todayRow.reviews[I] || [];
+    if (items.length === 0) continue;
+
+    let groupDone = 0;
+    const groupItems = [];
+    for (const id of items) {
+      todayTotal++;
+      const key = `${id}_${I}`;
+      const done = !!completions[key];
+      if (done) { todayDone++; groupDone++; }
+      groupItems.push({ id, I, done });
+    }
+
+    const groupTotal = items.length;
+    const groupAllDone = groupDone === groupTotal;
+    // Expand first incomplete group; if all complete, expand none
+    const open = !firstIncompleteFound && !groupAllDone;
+    if (open) firstIncompleteFound = true;
+
+    const group = document.createElement('div');
+    group.className = 'today-review-group' + (open ? ' open' : '');
+
+    group.innerHTML = `
+      <div class="today-review-header">
+        <span class="today-review-arrow">&#x25B6;</span>
+        <span class="today-interval-tag i${I}">${I}天</span>
+        <span class="today-review-label">${INTERVAL_LABELS[I]}</span>
+        <span class="today-review-progress" data-group="${I}">${groupDone}/${groupTotal}</span>
+      </div>
+      <div class="today-review-body">
+        <div class="today-item-list"></div>
+      </div>
+    `;
+
+    const innerList = group.querySelector('.today-item-list');
+    for (const gi of groupItems) {
+      const itemRow = document.createElement('div');
+      itemRow.className = 'today-content-item' + (gi.done ? ' done' : '');
+      itemRow.style.animationDelay = (animIdx++ * 50) + 'ms';
+      itemRow.innerHTML = `
+        <label class="today-check-label">
+          <input type="checkbox" data-item="${gi.id}" data-interval="${gi.I}" ${gi.done ? 'checked' : ''}>
+          <span class="today-check-mark"></span>
+        </label>
+        <span class="today-item-num">${gi.id}</span>
+        <span class="today-item-text ${contents[gi.id] ? '' : 'empty'}">${contents[gi.id] || '未设置内容'}</span>
+      `;
+      innerList.appendChild(itemRow);
+    }
+
+    revSection.appendChild(group);
+  }
+  grid.appendChild(revSection);
+
+  const todayPct = todayTotal === 0 ? 0 : Math.round(todayDone / todayTotal * 100);
+  document.getElementById('todayProgressText').textContent =
+    todayTotal === 0 ? '今日暂无复习任务' : `已完成 ${todayDone} / ${todayTotal}`;
+  document.getElementById('todayBar').style.width = todayPct + '%';
+  updateTimerDisplay();
+}
+
+function onToggleFocus() {
+  const wrap = document.getElementById('tableWrap');
+  const btn = document.getElementById('btnTodayFocus');
+  const active = !wrap.classList.contains('focus-mode');
+  if (active) {
+    const s = generateSchedule(currentConfig.startDate, currentConfig.itemsPerDay, currentConfig.totalDays);
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const hasToday = s.some(row => {
+      const d = new Date(row.date); d.setHours(0, 0, 0, 0);
+      return d.getTime() === today.getTime();
+    });
+    if (!hasToday) {
+      const first = s[0], last = s[s.length - 1];
+      if (today < new Date(first.date)) { toast('计划尚未开始'); return; }
+      if (today > new Date(last.date)) { toast('计划已结束'); return; }
+      toast('今日不在计划范围内'); return;
+    }
+    wrap.classList.add('focus-mode');
+    renderTodayOverview(s, currentCompletions, currentContents);
+    const overview = document.getElementById('todayOverview');
+    if (overview) overview.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } else {
+    wrap.classList.remove('focus-mode');
+    document.getElementById('todayOverview').classList.remove('open');
+  }
+  btn.classList.toggle('active', active);
+  btn.innerHTML = active ? '&#x25C9; 今日焦点 (开)' : '&#x25C9; 今日焦点';
+}
+
+let notifyEnabled = false;
+let notifyTimer = null;
+const NOTIFY_STORAGE = 'ebbinghaus_notify';
+
+function loadNotifyState() {
+  try {
+    const raw = localStorage.getItem(NOTIFY_STORAGE);
+    return raw ? JSON.parse(raw) : { enabled: false, time: '09:00', lastNotified: '' };
+  } catch(e) { return { enabled: false, time: '09:00', lastNotified: '' }; }
+}
+
+function saveNotifyState(state) {
+  try { localStorage.setItem(NOTIFY_STORAGE, JSON.stringify(state)); } catch(e) {}
+}
+
+function requestNotifyPermission() {
+  if (!('Notification' in window)) return false;
+  if (Notification.permission === 'granted') return true;
+  if (Notification.permission === 'denied') return false;
+  Notification.requestPermission().then(p => {
+    if (p === 'granted') toast('通知已开启');
+    else toast('通知被拒绝，请在浏览器设置中允许');
+  });
+  return false;
+}
+
+function sendNotification(schedule, completions) {
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  let todayRow = null;
+  for (const row of schedule) {
+    const d = new Date(row.date); d.setHours(0, 0, 0, 0);
+    if (d.getTime() === today.getTime()) { todayRow = row; break; }
+  }
+  if (!todayRow) return;
+  let total = 0, done = 0;
+  for (const I of INTERVALS) {
+    for (const id of todayRow.reviews[I]) {
+      total++;
+      if (completions[`${id}_${I}`]) done++;
+    }
+  }
+  const remaining = total - done;
+  const body = remaining === 0
+    ? '今日复习已全部完成！继续保持！'
+    : `还有 ${remaining} 项待复习（共 ${total} 项），别忘了哦。`;
+  new Notification('艾宾浩斯背诵提醒', { body, icon: '', silent: false });
+}
+
+function checkAndNotify() {
+  if (!notifyEnabled) return;
+  if (!currentConfig) return;
+  const state = loadNotifyState();
+  if (state.time !== document.getElementById('notifyTime').value) {
+    state.time = document.getElementById('notifyTime').value;
+    saveNotifyState(state);
+  }
+  const now = new Date();
+  const todayStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+  if (state.lastNotified === todayStr) return;
+  const [h, m] = state.time.split(':').map(Number);
+  if (now.getHours() === h && now.getMinutes() >= m && now.getMinutes() < m + 5) {
+    const s = generateSchedule(currentConfig.startDate, currentConfig.itemsPerDay, currentConfig.totalDays);
+    sendNotification(s, currentCompletions);
+    state.lastNotified = todayStr;
+    saveNotifyState(state);
+  }
+}
+
+function startNotifyTimer() {
+  if (notifyTimer) clearInterval(notifyTimer);
+  notifyTimer = setInterval(checkAndNotify, 45000);
+}
+
+function onToggleNotify() {
+  const btn = document.getElementById('btnNotify');
+  if (!notifyEnabled) {
+    const granted = Notification.permission === 'granted';
+    if (!granted && Notification.permission !== 'denied') {
+      Notification.requestPermission().then(p => {
+        if (p === 'granted') {
+          enableNotify();
+          toast('每日提醒已开启');
+        } else {
+          toast('需要允许通知权限才能使用提醒功能');
+        }
+      });
+      return;
+    }
+    if (Notification.permission === 'denied') {
+      toast('通知已被浏览器阻止，请在地址栏左侧的网站设置中开启');
+      return;
+    }
+    enableNotify();
+    toast('每日提醒已开启');
+  } else {
+    notifyEnabled = false;
+    btn.classList.remove('active');
+    btn.innerHTML = '&#x1F514; 每日提醒';
+    const state = loadNotifyState();
+    state.enabled = false;
+    saveNotifyState(state);
+    toast('每日提醒已关闭');
+  }
+}
+
+function enableNotify() {
+  notifyEnabled = true;
+  const btn = document.getElementById('btnNotify');
+  btn.classList.add('active');
+  btn.innerHTML = '&#x1F514; 每日提醒 (开)';
+  const state = loadNotifyState();
+  state.enabled = true;
+  state.time = document.getElementById('notifyTime').value;
+  saveNotifyState(state);
+  startNotifyTimer();
+}
+
+function onToggle() {
+  const wrap = document.getElementById('tableWrap');
+  const btn = document.getElementById('btnToggle');
+  const collapsed = wrap.classList.toggle('collapsed');
+  btn.textContent = collapsed ? '全部展开' : '全部折叠';
+  const d = collapsed ? 'none' : '';
+  wrap.querySelectorAll('.col-r1,.col-r2,.col-r4,.col-r7,.col-r15,.col-r30').forEach(td => td.style.display = d);
+  wrap.querySelectorAll('th:nth-child(n+4)').forEach(th => th.style.display = d);
+}
+
+function onClear() {
+  if (confirm('确定要清空所有复习完成标记吗？此操作不可撤销。')) {
+    currentCompletions = {};
+    saveState(currentConfig, currentCompletions, currentContents);
+    const s = generateSchedule(currentConfig.startDate, currentConfig.itemsPerDay, currentConfig.totalDays);
+    renderTable(s, currentCompletions, currentContents);
+    updateStats(s, currentCompletions);
+    if (document.getElementById('todayOverview').classList.contains('open')) {
+      renderTodayOverview(s, currentCompletions, currentContents);
+    }
+    toast('已清空所有标记');
+  }
+}
+
+function renderStatsModal() {
+  const body = document.getElementById('statsModalBody');
+  const durs = loadDurations();
+  const keys = Object.keys(durs).sort();
+  if (keys.length === 0) {
+    body.innerHTML = '<div class="stats-empty">暂无复习时长记录<br><small>开始复习并完成当日任务后将自动记录</small></div>';
+    return;
+  }
+  let totalSec = 0;
+  let html = '<table class="stats-table"><thead><tr><th>日期</th><th class="dur-col">时长</th></tr></thead><tbody>';
+  for (const k of keys) {
+    const sec = durs[k];
+    totalSec += sec;
+    const m = Math.floor(sec / 60);
+    const s = sec % 60;
+    const durStr = m > 0 ? `${m} 分 ${s} 秒` : `${s} 秒`;
+    html += `<tr><td>${k}</td><td class="dur-col">${durStr}</td></tr>`;
+  }
+  const tm = Math.floor(totalSec / 60);
+  const ts = totalSec % 60;
+  const totalStr = tm > 0 ? `${tm} 分 ${ts} 秒` : `${ts} 秒`;
+  html += `<tr class="cumulative-row"><td>累计</td><td class="dur-col">${totalStr}</td></tr>`;
+  html += '</tbody></table>';
+  body.innerHTML = html;
+}
+
+function onSaveContent() {
+  document.getElementById('contentPanelBody').querySelectorAll('input[data-item]').forEach(inp => {
+    const id = parseInt(inp.dataset.item, 10);
+    const val = inp.value.trim();
+    if (val) currentContents[id] = val; else delete currentContents[id];
+  });
+  saveState(currentConfig, currentCompletions, currentContents);
+  const s = generateSchedule(currentConfig.startDate, currentConfig.itemsPerDay, currentConfig.totalDays);
+  renderTable(s, currentCompletions, currentContents);
+  if (document.getElementById('todayOverview').classList.contains('open')) {
+    renderTodayOverview(s, currentCompletions, currentContents);
+  }
+  toast('内容已保存');
+}
+
+function onCollapseAllGroups() {
+  const all = document.getElementById('contentPanelBody').querySelectorAll('.day-items');
+  const allVisible = [...all].every(d => d.style.display !== 'none');
+  all.forEach(d => { d.style.display = allVisible ? 'none' : ''; });
+  document.getElementById('btnCollapseAllGroups').textContent = allVisible ? '展开全部' : '折叠全部';
+}
+
+function init() {
+  const today = new Date();
+  document.getElementById('startDate').value =
+    `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+  const saved = loadState();
+  if (saved && saved.config) {
+    const c = saved.config;
+    document.getElementById('startDate').value = c.startDate;
+    document.getElementById('itemsPerDay').value = c.itemsPerDay;
+    document.getElementById('totalDays').value = c.totalDays;
+    currentConfig = c;
+    currentCompletions = saved.completions || {};
+    currentContents = saved.contents || {};
+    const schedule = generateSchedule(c.startDate, c.itemsPerDay, c.totalDays);
+    buildTableShell();
+    renderTable(schedule, currentCompletions, currentContents);
+    renderContentPanel(schedule, currentContents);
+    updateStats(schedule, currentCompletions);
+    showAfterGenerate();
+  }
+  document.getElementById('btnGenerate').addEventListener('click', onGenerate);
+  document.getElementById('btnToggle').addEventListener('click', onToggle);
+  document.getElementById('btnTodayFocus').addEventListener('click', onToggleFocus);
+  document.getElementById('btnClear').addEventListener('click', onClear);
+  document.getElementById('btnEditContent').addEventListener('click', () => {
+    document.getElementById('contentPanel').scrollIntoView({ behavior: 'smooth' });
+  });
+  document.getElementById('btnSaveContent').addEventListener('click', onSaveContent);
+  document.getElementById('btnCollapseAllGroups').addEventListener('click', onCollapseAllGroups);
+  document.getElementById('tableWrap').addEventListener('change', onCheckbox);
+  document.getElementById('todayOverview').addEventListener('change', onCheckbox);
+  document.getElementById('todayOverview').addEventListener('click', function(e) {
+    const header = e.target.closest('.today-review-header');
+    if (!header) return;
+    const group = header.closest('.today-review-group');
+    if (!group) return;
+    group.classList.toggle('open');
+  });
+  document.getElementById('btnTimer').addEventListener('click', function() {
+    const state = loadTimerState();
+    const todayKey = getDateKey(new Date());
+    if (state && state.date === todayKey && !state.stopped) return; // already running
+    if (state && state.date === todayKey && state.stopped) return; // already done
+    startTimer();
+  });
+  document.getElementById('btnStats').addEventListener('click', function() {
+    renderStatsModal();
+    document.getElementById('statsModalOverlay').classList.add('open');
+  });
+  document.getElementById('statsModalClose').addEventListener('click', function() {
+    document.getElementById('statsModalOverlay').classList.remove('open');
+  });
+  document.getElementById('statsModalOverlay').addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('open');
+  });
+  document.getElementById('btnNotify').addEventListener('click', onToggleNotify);
+  document.getElementById('notifyTime').addEventListener('change', function() {
+    if (notifyEnabled) {
+      const state = loadNotifyState();
+      state.time = this.value;
+      saveNotifyState(state);
+    }
+  });
+  const ns = loadNotifyState();
+  if (ns.enabled && 'Notification' in window && Notification.permission === 'granted') {
+    document.getElementById('notifyTime').value = ns.time;
+    notifyEnabled = true;
+    document.getElementById('btnNotify').classList.add('active');
+    document.getElementById('btnNotify').innerHTML = '&#x1F514; 每日提醒 (开)';
+    startNotifyTimer();
+  } else if (ns.enabled) {
+    document.getElementById('notifyTime').value = ns.time;
+    ns.enabled = false;
+    saveNotifyState(ns);
+  }
+  document.querySelectorAll('.field input').forEach(inp => {
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') onGenerate(); });
+  });
+
+  // Register Service Worker for PWA offline support
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  }
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+
+</body>
+</html>
