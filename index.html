@@ -2578,7 +2578,10 @@ function restoreLocalFiles() {
       localCurrentIdx = 0;
       document.getElementById('localPlayer').style.display = '';
       renderLocalPlaylist();
-      // Don't auto-play — browser policy requires user gesture
+      // Pre-load first track's src so play/pause works on first click
+      var firstFile = localAudioFiles[0].blob;
+      var audio = document.getElementById('musicAudio');
+      audio.src = URL.createObjectURL(firstFile);
       updateLocalNowPlaying();
       document.getElementById('localNowPlaying').textContent = localAudioFiles[0].name + ' (就绪)';
     }
