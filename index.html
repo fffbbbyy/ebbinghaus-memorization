@@ -4,8 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>艾宾浩斯记忆曲线背诵表</title>
-<meta name="theme-color" content="#3d1f0c">
-<link rel="manifest" href="./manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Playfair+Display:ital,wght@0,500;0,700;0,900;1,500&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -2859,11 +2857,6 @@ function init() {
   document.querySelectorAll('.field input').forEach(inp => {
     inp.addEventListener('keydown', e => { if (e.key === 'Enter') onGenerate(); });
   });
-
-  // Register Service Worker for PWA offline support
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js').catch(() => {});
-  }
 }
 
 document.addEventListener('DOMContentLoaded', init);
