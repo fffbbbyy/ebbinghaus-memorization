@@ -1594,6 +1594,8 @@ body::after {
     <button class="btn btn-outline btn-today-focus" id="btnTodayFocus" style="display:none;">&#x25C9; 今日焦点</button>
     <button class="btn btn-outline" id="btnClear" style="display:none;">清空标记</button>
     <button class="btn btn-outline" id="btnStats" style="display:none;">&#x1F4CA; 统计时长</button>
+    <button class="btn btn-outline" id="btnExport" style="display:none;">导出数据</button>
+    <button class="btn btn-outline" id="btnImport" style="display:none;">导入数据</button>
     <span class="notify-group" id="notifyGroup" style="display:none;">
       <button class="btn btn-outline btn-notify" id="btnNotify" title="每日复习提醒">&#x1F514; 每日提醒</button>
       <input type="time" id="notifyTime" value="09:00" class="notify-time">
@@ -1687,6 +1689,16 @@ body::after {
       <span class="stats-modal-close" id="statsModalClose">&times;</span>
     </div>
     <div class="stats-modal-body" id="statsModalBody"></div>
+  </div>
+</div>
+
+<div class="stats-modal-overlay" id="dataModalOverlay">
+  <div class="stats-modal">
+    <div class="stats-modal-header">
+      <span id="dataModalTitle">数据导出</span>
+      <span class="stats-modal-close" id="dataModalClose">&times;</span>
+    </div>
+    <div class="stats-modal-body" id="dataModalBody"></div>
   </div>
 </div>
 
@@ -2268,6 +2280,8 @@ function showAfterGenerate() {
   document.getElementById('btnEditContent').style.display = '';
   document.getElementById('notifyGroup').style.display = '';
   document.getElementById('btnStats').style.display = '';
+  document.getElementById('btnExport').style.display = '';
+  document.getElementById('btnImport').style.display = '';
   document.getElementById('legend').style.display = '';
   document.getElementById('contentPanel').classList.add('open');
   document.getElementById('editHint').textContent = '点击表格中「今日背诵」列可编辑内容';
@@ -2682,6 +2696,61 @@ function renderStatsModal() {
   body.innerHTML = html;
 }
 
+function onExport() {
+  const data = {
+    schedule: loadState(),
+    durations: loadDurations(),
+    exportedAt: new Date().toISOString()
+  };
+  document.getElementById('dataModalTitle').textContent = '导出数据';
+  document.getElementById('dataModalBody').innerHTML = `
+    <p style="margin-bottom:10px;color:var(--faded-ink);font-size:13px;">复制下方全部内容，在另一台设备上点击「导入数据」粘贴即可。</p>
+    <textarea id="exportTextarea" readonly style="width:100%;height:180px;font-family:'JetBrains Mono',monospace;font-size:11px;padding:10px;border:1px solid rgba(125,94,16,0.3);border-radius:2px;background:rgba(255,255,255,0.5);color:var(--iron-gall-ink);resize:vertical;"
+    >${JSON.stringify(data, null, 2)}</textarea>
+    <button class="btn btn-primary btn-sm" id="btnCopyExport" style="margin-top:10px;">复制到剪贴板</button>
+  `;
+  document.getElementById('dataModalOverlay').classList.add('open');
+  document.getElementById('btnCopyExport').addEventListener('click', function() {
+    const ta = document.getElementById('exportTextarea');
+    ta.select();
+    document.execCommand('copy');
+    navigator.clipboard.writeText(ta.value).catch(() => {});
+    toast('已复制到剪贴板');
+  });
+}
+
+function onImport() {
+  document.getElementById('dataModalTitle').textContent = '导入数据';
+  document.getElementById('dataModalBody').innerHTML = `
+    <p style="margin-bottom:10px;color:var(--faded-ink);font-size:13px;">粘贴之前导出的数据，然后点击「导入」。</p>
+    <textarea id="importTextarea" placeholder="在此粘贴数据..." style="width:100%;height:180px;font-family:'JetBrains Mono',monospace;font-size:11px;padding:10px;border:1px solid rgba(125,94,16,0.3);border-radius:2px;background:rgba(255,255,255,0.5);color:var(--iron-gall-ink);resize:vertical;"
+    ></textarea>
+    <div style="display:flex;gap:8px;margin-top:10px;">
+      <button class="btn btn-primary btn-sm" id="btnDoImport">导入</button>
+      <span style="font-size:11px;color:var(--red-ink);line-height:2.2;">导入会覆盖当前所有数据，请谨慎操作</span>
+    </div>
+  `;
+  document.getElementById('dataModalOverlay').classList.add('open');
+  document.getElementById('btnDoImport').addEventListener('click', function() {
+    const raw = document.getElementById('importTextarea').value.trim();
+    if (!raw) { toast('请先粘贴数据'); return; }
+    try {
+      const data = JSON.parse(raw);
+      if (data.schedule && data.schedule.config) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data.schedule));
+      }
+      if (data.durations) {
+        localStorage.setItem(DURATIONS_KEY, JSON.stringify(data.durations));
+      }
+      document.getElementById('dataModalOverlay').classList.remove('open');
+      toast('导入成功，请刷新页面');
+      setTimeout(function() { location.reload(); }, 800);
+    } catch(e) {
+      toast('数据格式错误，请检查');
+    }
+  });
+}
+
 function onSaveContent() {
   document.getElementById('contentPanelBody').querySelectorAll('input[data-item]').forEach(inp => {
     const id = parseInt(inp.dataset.item, 10);
@@ -2757,6 +2826,14 @@ function init() {
     document.getElementById('statsModalOverlay').classList.remove('open');
   });
   document.getElementById('statsModalOverlay').addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('open');
+  });
+  document.getElementById('btnExport').addEventListener('click', onExport);
+  document.getElementById('btnImport').addEventListener('click', onImport);
+  document.getElementById('dataModalClose').addEventListener('click', function() {
+    document.getElementById('dataModalOverlay').classList.remove('open');
+  });
+  document.getElementById('dataModalOverlay').addEventListener('click', function(e) {
     if (e.target === this) this.classList.remove('open');
   });
   document.getElementById('btnNotify').addEventListener('click', onToggleNotify);
