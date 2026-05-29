@@ -2321,15 +2321,16 @@ function addLocalFiles(fileList) {
 
   // Save to IndexedDB
   var saved = 0;
+  var timestamp = Date.now();
   for (var k = 0; k < toAdd.length; k++) {
-    (function(file) {
-      var id = Date.now() + '_' + k;
+    (function(file, idx) {
+      var id = timestamp + '_' + idx;
       saveAudioBlob(id, file.name, file.size, file).then(function() {
         localAudioFiles.push({ id: id, name: file.name, size: file.size, blob: file });
         saved++;
         if (saved === toAdd.length) finishAdd();
       });
-    })(toAdd[k]);
+    })(toAdd[k], k);
   }
 
   function finishAdd() {
@@ -2364,7 +2365,7 @@ function playLocalFile(idx) {
   if (audio.src && audio.src.startsWith('blob:')) {
     URL.revokeObjectURL(audio.src);
   }
-  const url = URL.createObjectURL(file);
+  const url = URL.createObjectURL(file.blob || file);
   audio.src = url;
   audio.load();
   audio.play().then(function() {
