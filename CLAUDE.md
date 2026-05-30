@@ -19,14 +19,14 @@
 ## 打开方式
 
 ```
-start "" "A:\艾宾浩斯曲线\index.html"
+start "" "A:\vibe coding\艾宾浩斯曲线\index.html"
 ```
 
 或运行 `shortcut.vbs` 在桌面创建快捷方式。
 
 调试时可启动本地 HTTP 服务器（避免 `file://` 协议缓存问题）：
 ```
-cd "A:\艾宾浩斯曲线" && python -m http.server 8765
+cd "A:\vibe coding\艾宾浩斯曲线" && python -m http.server 8765
 start "" "http://localhost:8765/index.html"
 ```
 

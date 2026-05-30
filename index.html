@@ -1288,6 +1288,7 @@ body::after {
   .control-row { gap: 8px; }
   .field input { width: 100%; }
   .btn { padding: 8px 14px; font-size: 11px; }
+  .vinyl-side { display: none; }
 }
 
 /* ── Page-load Ink-bleed Effect ────────────────────────── */
@@ -1833,7 +1834,271 @@ body::after {
   border-radius: 1px;
 }
 
-/* ── Reduced Motion — Accessibility ────────────────────── */
+/* ── Vinyl Record Side Animation ────────────────────────── */
+.vinyl-side {
+  position: fixed; top: 50%; z-index: 100;
+  width: 150px; height: 150px;
+  transform: translateY(-50%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+.vinyl-side.active { opacity: 1; }
+.vinyl-left  { left: 18px; }
+.vinyl-right { right: 18px; }
+
+.vinyl-disc {
+  width: 100%; height: 100%;
+  border-radius: 50%;
+  background:
+    /* Groove rings */
+    radial-gradient(circle at 50% 50%,
+      transparent 0px, transparent 14px,
+      rgba(30,30,30,0.5) 14.5px, rgba(60,60,60,0.3) 15px,
+      rgba(0,0,0,0.9) 16px, rgba(0,0,0,0.9) 19px,
+      rgba(35,35,35,0.4) 19.5px, rgba(20,20,20,0.9) 20px,
+      rgba(20,20,20,0.9) 24px,
+      rgba(30,30,30,0.35) 24.5px, rgba(15,15,15,0.9) 25px,
+      rgba(15,15,15,0.9) 30px,
+      rgba(28,28,28,0.3) 30.5px, rgba(12,12,12,0.85) 31px,
+      rgba(12,12,12,0.85) 37px,
+      rgba(25,25,25,0.28) 37.5px, rgba(10,10,10,0.82) 38px,
+      rgba(10,10,10,0.82) 44px,
+      rgba(22,22,22,0.25) 44.5px, rgba(8,8,8,0.8) 45px,
+      rgba(8,8,8,0.8) 51px,
+      rgba(20,20,20,0.22) 51.5px, rgba(8,8,8,0.78) 52px,
+      rgba(8,8,8,0.78) 57px,
+      /* Center label */
+      rgba(170,115,35,0.95) 57.5px, rgba(190,135,50,0.9) 60px,
+      rgba(210,155,70,0.85) 67px, rgba(175,120,35,0.88) 71px,
+      rgba(160,105,25,0.9) 72px,
+      transparent 72.5px
+    );
+  box-shadow:
+    0 0 0 2px rgba(0,0,0,0.7),
+    0 0 0 5px rgba(20,20,20,0.6),
+    0 0 0 6px rgba(0,0,0,0.5),
+    0 4px 20px rgba(0,0,0,0.4),
+    0 0 40px rgba(0,0,0,0.15);
+  position: relative;
+}
+
+/* Label decoration — center circle background */
+.vinyl-disc::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 45% 40%,
+    #f0ddb0 0%, #d4b870 30%, #b89245 70%, #8a6620 100%);
+  box-shadow: inset 0 1px 3px rgba(255,255,255,0.4),
+    0 0 0 3px rgba(150,110,40,0.6),
+    0 0 0 4px rgba(200,150,60,0.3);
+  z-index: 1;
+}
+
+/* Spindle pin */
+.vinyl-disc::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #ddd 0%, #888 50%, #444 100%);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  z-index: 3;
+}
+
+/* Center label text — removed, replaced with tonearm */
+
+/* ── Tonearm — 3D Metallic ──────────────────────────────── */
+.tonearm {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* Pivot base — raised metallic disc */
+.tonearm-pivot {
+  position: absolute;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 45% 35%,
+      #e8e4da 0%, #c8c4b8 25%, #a09a8c 55%, #706a5e 80%, #504a40 100%);
+  box-shadow:
+    0 2px 6px rgba(0,0,0,0.35),
+    0 0 0 2px rgba(160,150,130,0.5),
+    0 0 0 2.5px rgba(80,75,65,0.7),
+    inset 0 1px 2px rgba(255,255,255,0.5);
+  z-index: 2;
+}
+.vinyl-left .tonearm-pivot  { top: 11px; left: 114px; }
+.vinyl-right .tonearm-pivot { top: 11px; left: 14px; }
+
+/* Counterweight stub — small cylinder behind the pivot */
+.tonearm-pivot::after {
+  content: '';
+  position: absolute;
+  top: 50%; transform: translateY(-50%);
+  width: 16px; height: 8px;
+  background: linear-gradient(180deg, #b8b0a0 0%, #888070 50%, #605848 100%);
+  border-radius: 3px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+.vinyl-left .tonearm-pivot::after  { right: -18px; }
+.vinyl-right .tonearm-pivot::after { left: -18px; }
+
+/* Main shaft — tapered metallic arm */
+.tonearm-shaft {
+  position: absolute;
+  height: 6px;
+  width: 88px;
+  background: linear-gradient(180deg,
+    #d8d4c8 0%, #b0a898 20%, #908878 45%, #706858 55%, #a09888 80%, #c8c4b8 100%);
+  border-radius: 3px;
+  box-shadow:
+    0 2px 4px rgba(0,0,0,0.25),
+    0 0 2px rgba(0,0,0,0.1);
+  z-index: 1;
+  transform-origin: 12px center;
+}
+/* Tapered tip via pseudo-element */
+.tonearm-shaft::after {
+  content: '';
+  position: absolute;
+  right: -3px; top: 1px; bottom: 1px;
+  width: 4px;
+  background: linear-gradient(180deg, #c0b8a8 0%, #807868 100%);
+  border-radius: 0 2px 2px 0;
+}
+
+.vinyl-left .tonearm-shaft {
+  top: 19px; left: 113px;
+  transform: rotate(148deg);
+}
+.vinyl-right .tonearm-shaft {
+  top: 19px; left: 13px;
+  transform: rotate(32deg);
+}
+
+/* Headshell — angled cartridge holder */
+.tonearm-headshell {
+  position: absolute;
+  width: 16px; height: 10px;
+  background: linear-gradient(180deg,
+    #6a6258 0%, #4a4238 50%, #3a3228 100%);
+  border-radius: 2px;
+  box-shadow:
+    0 2px 4px rgba(0,0,0,0.35),
+    inset 0 1px 1px rgba(255,255,255,0.15);
+  z-index: 3;
+}
+.vinyl-left .tonearm-headshell {
+  top: 64px; left: 48px;
+  transform: rotate(-18deg);
+}
+.vinyl-right .tonearm-headshell {
+  top: 64px; left: 84px;
+  transform: rotate(18deg);
+}
+
+/* Stylus needle — tiny sharp point */
+.tonearm-stylus {
+  position: absolute;
+  width: 2px; height: 12px;
+  background: linear-gradient(180deg, #777 0%, #444 50%, #111 100%);
+  border-radius: 0 0 1px 1px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  z-index: 4;
+  transform-origin: top center;
+}
+.vinyl-left .tonearm-stylus {
+  top: 73px; left: 52px;
+  transform: rotate(3deg);
+}
+.vinyl-right .tonearm-stylus {
+  top: 73px; left: 95px;
+  transform: rotate(-3deg);
+}
+
+/* Subtle vibration when playing — stylus tracking the groove */
+.vinyl-spinning .tonearm-stylus {
+  animation: stylusVibrate 0.06s linear infinite;
+}
+
+@keyframes stylusVibrate {
+  0%, 100% { transform: translateX(0) rotate(3deg); }
+  25%      { transform: translateX(0.6px) rotate(3.5deg); }
+  50%      { transform: translateX(-0.4px) rotate(2.8deg); }
+  75%      { transform: translateX(0.5px) rotate(3.3deg); }
+}
+.vinyl-right.vinyl-spinning .tonearm-stylus {
+  animation: stylusVibrateR 0.06s linear infinite;
+}
+@keyframes stylusVibrateR {
+  0%, 100% { transform: translateX(0) rotate(-3deg); }
+  25%      { transform: translateX(-0.6px) rotate(-3.5deg); }
+  50%      { transform: translateX(0.4px) rotate(-2.8deg); }
+  75%      { transform: translateX(-0.5px) rotate(-3.3deg); }
+}
+
+/* Light streak — prominent asymmetric reflection across the disc */
+.vinyl-streak {
+  position: absolute;
+  top: 8%; left: 25%; right: 35%; bottom: 60%;
+  background: linear-gradient(
+    160deg,
+    rgba(255,255,255,0.12) 0%,
+    rgba(255,255,255,0.04) 30%,
+    rgba(255,255,255,0.14) 50%,
+    rgba(255,255,255,0.02) 70%,
+    rgba(255,255,255,0.07) 100%
+  );
+  border-radius: 40%;
+  z-index: 4;
+  pointer-events: none;
+  transform: rotate(-20deg);
+}
+
+/* Glossy light reflection */
+.vinyl-gloss {
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  border-radius: 50%;
+  background: linear-gradient(
+    135deg,
+    rgba(255,255,255,0.06) 0%,
+    rgba(255,255,255,0.01) 20%,
+    transparent 35%,
+    transparent 55%,
+    rgba(255,255,255,0.02) 70%,
+    rgba(255,255,255,0.08) 100%
+  );
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* Rotation — always defined, toggled via animation-play-state */
+.vinyl-disc {
+  animation: vinylRotate 2s linear infinite;
+  animation-play-state: paused;
+  will-change: transform;
+}
+
+.vinyl-spinning .vinyl-disc {
+  animation-play-state: running;
+}
+
+@keyframes vinylRotate {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Reduced Motion — Accessibility ────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
@@ -1842,6 +2107,7 @@ body::after {
   }
   .card, .header { animation: none; opacity: 1; filter: none; transform: none; }
   .today-content-item { animation: none; opacity: 1; transform: none; }
+  .vinyl-disc { animation: none !important; }
 }
 </style>
 </head>
@@ -2032,6 +2298,31 @@ body::after {
 
 <div class="firework-side firework-left" id="fireworkLeft"></div>
 <div class="firework-side firework-right" id="fireworkRight"></div>
+
+<div class="vinyl-side vinyl-left" id="vinylLeft">
+  <div class="vinyl-disc">
+    <div class="vinyl-gloss"></div>
+    <div class="vinyl-streak"></div>
+  </div>
+  <div class="tonearm">
+    <div class="tonearm-pivot"></div>
+    <div class="tonearm-shaft"></div>
+    <div class="tonearm-headshell"></div>
+    <div class="tonearm-stylus"></div>
+  </div>
+</div>
+<div class="vinyl-side vinyl-right" id="vinylRight">
+  <div class="vinyl-disc">
+    <div class="vinyl-gloss"></div>
+    <div class="vinyl-streak"></div>
+  </div>
+  <div class="tonearm">
+    <div class="tonearm-pivot"></div>
+    <div class="tonearm-shaft"></div>
+    <div class="tonearm-headshell"></div>
+    <div class="tonearm-stylus"></div>
+  </div>
+</div>
 
 <div class="stats-modal-overlay" id="statsModalOverlay">
   <div class="stats-modal">
@@ -2462,6 +2753,19 @@ function updatePlayPauseBtn(playing) {
   var btn = document.getElementById('btnPlayPause');
   if (!btn) return;
   btn.innerHTML = playing ? '&#x23F8;' : '&#x25B6;';
+  updateVinylState(playing);
+}
+
+function updateVinylState(playing) {
+  var left = document.getElementById('vinylLeft');
+  var right = document.getElementById('vinylRight');
+  if (playing) {
+    if (left) { left.classList.add('active'); left.classList.add('vinyl-spinning'); }
+    if (right) { right.classList.add('active'); right.classList.add('vinyl-spinning'); }
+  } else {
+    if (left) { left.classList.remove('vinyl-spinning'); left.classList.remove('active'); }
+    if (right) { right.classList.remove('vinyl-spinning'); right.classList.remove('active'); }
+  }
 }
 
 function updateLocalNowPlaying() {
@@ -3022,7 +3326,7 @@ function computeStreak(schedule, completions) {
     for (const I of INTERVALS) {
       for (const id of row.reviews[I]) {
         total++;
-        if (completions[`${id}_${I}`]) done++;
+        if (completions[id + '_' + I]) done++;
       }
     }
     completeMap.set(row.dayIndex, total > 0 && done === total);
@@ -3046,7 +3350,7 @@ function updateStats(schedule, completions) {
     for (const I of INTERVALS)
       for (const id of row.reviews[I]) {
         total++;
-        if (completions[`${id}_${I}`]) done++;
+        if (completions[id + '_' + I]) done++;
       }
   const pct = total === 0 ? 0 : Math.round(done / total * 100);
   document.getElementById('statTotal').textContent = total;
@@ -3165,7 +3469,7 @@ function isTodayComplete(schedule, completions) {
   for (const I of INTERVALS) {
     for (const id of bestRow.reviews[I]) {
       total++;
-      if (completions[`${id}_${I}`]) done++;
+      if (completions[id + '_' + I]) done++;
     }
   }
   return total > 0 && done === total;
@@ -3305,7 +3609,7 @@ function renderTodayOverview(schedule, completions, contents) {
     const groupItems = [];
     for (const id of items) {
       todayTotal++;
-      const key = `${id}_${I}`;
+      const key = id + '_' + I;
       const done = !!completions[key];
       if (done) { todayDone++; groupDone++; }
       groupItems.push({ id, I, done });

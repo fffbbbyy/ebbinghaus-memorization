@@ -1,6 +1,6 @@
 Set ws = CreateObject("WScript.Shell")
 desktop = ws.SpecialFolders("Desktop")
-target = "A:\艾宾浩斯曲线\index.html"
+target = "A:\vibe coding\艾宾浩斯曲线\index.html"
 shortcut = desktop & "\艾宾浩斯背诵表.lnk"
 Set link = ws.CreateShortcut(shortcut)
 link.TargetPath = target
