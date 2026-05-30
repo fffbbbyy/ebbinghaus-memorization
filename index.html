@@ -1255,6 +1255,97 @@ body::after {
   100% { transform: translate(var(--tx), var(--ty)) scale(0.3) rotate(360deg); opacity: 0; }
 }
 
+/* ── Star Chart Card ───────────────────────────────────── */
+.star-chart-card { display: none; }
+.star-chart-card.unlocked { display: block; }
+.star-chart-header {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 18px; border-bottom: 1px solid var(--rule);
+  font-family: 'Playfair Display', serif; font-size: 13px; color: var(--iron-gall-ink);
+}
+.star-chart-header .phase-name { color: var(--copper-oxide); font-weight: 700; font-style: italic; }
+.star-chart-body {
+  display: flex; gap: 16px; padding: 14px 18px; align-items: flex-start;
+}
+.star-canvas-wrap {
+  flex: 0 0 300px; position: relative; cursor: pointer;
+  border-radius: 6px; overflow: hidden;
+  box-shadow: inset 0 0 30px rgba(10,13,26,0.6);
+  transition: box-shadow 0.6s;
+}
+.star-canvas-wrap canvas { display: block; width: 100%; height: auto; }
+.star-canvas-wrap:hover::after {
+  content: '点击放大'; position: absolute; bottom: 6px; right: 10px;
+  font-size: 9px; color: rgba(240,216,144,0.6);
+  font-family: 'Crimson Text', serif; pointer-events: none;
+}
+.star-chart-sidebar { flex: 1; min-width: 0; }
+.star-today-label {
+  font-size: 11px; font-family: 'Crimson Text', serif;
+  color: var(--faded-ink); margin-bottom: 6px;
+}
+.star-today-constellation { display: flex; align-items: center; gap: 6px; margin-bottom: 14px; }
+.star-today-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #f0d890; box-shadow: 0 0 4px #f0d890;
+}
+.star-today-dot.dim { background: rgba(240,216,144,0.25); box-shadow: none; }
+.star-chart-log-title {
+  font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--ink-faint); margin-bottom: 4px;
+}
+.star-recent-row {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 10px; font-family: 'JetBrains Mono', monospace;
+  color: var(--faded-ink); margin-bottom: 2px;
+}
+.star-recent-dots { display: flex; gap: 2px; }
+.star-recent-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: #f0d890; box-shadow: 0 0 2px #f0d890;
+}
+.star-recent-dot.dim { background: rgba(240,216,144,0.2); box-shadow: none; }
+.star-phase-msg {
+  font-size: 11px; color: var(--brass-polished);
+  font-family: 'Ma Shan Zheng', cursive; text-align: center;
+  padding: 0 18px 10px;
+}
+.star-phase-msg.phase-upgrade {
+  animation: phaseUpgradeFade 3s ease-out forwards;
+}
+@keyframes phaseUpgradeFade {
+  0% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-6px); }
+}
+
+/* ── Star Fullscreen Overlay ──────────────────────────── */
+.star-fullscreen-overlay {
+  position: fixed; inset: 0; z-index: 10000;
+  background: #0a0d1a;
+  display: none; flex-direction: column;
+  align-items: center; justify-content: center;
+  animation: starFadeIn 0.5s ease-out;
+}
+.star-fullscreen-overlay.open { display: flex; }
+@keyframes starFadeIn { from { opacity: 0; } to { opacity: 1; } }
+.star-fullscreen-close {
+  position: absolute; top: 20px; right: 30px;
+  background: none; border: 1px solid rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.7); font-size: 20px;
+  width: 44px; height: 44px; border-radius: 50%;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  z-index: 1; transition: all 0.2s;
+}
+.star-fullscreen-close:hover, .star-fullscreen-close:focus-visible {
+  background: rgba(255,255,255,0.1); color: #fff; border-color: rgba(255,255,255,0.5);
+}
+.star-fullscreen-phase {
+  position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+  font-family: 'Ma Shan Zheng', cursive; font-size: 24px;
+  color: rgba(240,216,144,0.5); pointer-events: none;
+}
+.star-fullscreen-canvas { width: 100%; height: 100%; }
+
 /* ── Print — Clean Vintage Look ────────────────────────── */
 @media print {
   body {
@@ -2191,6 +2282,22 @@ body::after {
   <span style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--faded-ink);" id="statTime"></span>
 </div>
 
+<div class="card star-chart-card" id="starChartCard">
+  <div class="star-chart-header">
+    <span>★ 星图 · </span><span class="phase-name" id="starPhaseName">星芽</span>
+    <span style="margin-left:auto;font-size:10px;color:var(--faded-ink);">
+      累计 <span id="starTotalCount">0</span> 颗星
+    </span>
+  </div>
+  <div class="star-chart-body">
+    <div class="star-canvas-wrap" id="starCanvasWrap" title="点击放大星图">
+      <canvas id="starCanvas" width="300" height="200"></canvas>
+    </div>
+    <div class="star-chart-sidebar" id="starSidebar"></div>
+  </div>
+  <div class="star-phase-msg" id="starPhaseMsg" style="display:none;"></div>
+</div>
+
 <div class="card music-card" id="musicCard" style="display:none;">
   <div class="music-header" id="musicHeader">
     <span class="music-collapsed-text" id="musicCollapsedText">🎵 背景音乐</span>
@@ -2254,6 +2361,12 @@ body::after {
 </div>
 
 <audio id="musicAudio" style="display:none;"></audio>
+
+<div class="star-fullscreen-overlay" id="starFullscreen">
+  <button class="star-fullscreen-close" id="starFullscreenClose" aria-label="关闭星图">&times;</button>
+  <canvas id="starFullscreenCanvas" class="star-fullscreen-canvas"></canvas>
+  <div class="star-fullscreen-phase" id="starFullscreenPhase"></div>
+</div>
 
 <div class="card" id="tableCard" style="display:none;">
   <div class="table-wrap" id="tableWrap">
@@ -2350,6 +2463,333 @@ body::after {
 const INTERVALS = [1, 2, 4, 7, 15, 30];
 const STORAGE_KEY = 'ebbinghaus_schedule_v2';
 const STORAGE_KEY_LEGACY = 'ebbinghaus_schedule';
+
+// ── Star Chart ───────────────────────────────────────────────
+const STARCHART_KEY = 'ebbinghaus_starchart';
+const STAR_PHASES = [
+  { name:'星芽',   min:1,   rot:0,    starR:2.0, lineA:0,    aurora:false },
+  { name:'星溪',   min:3,   rot:0,    starR:2.5, lineA:0.15, aurora:false },
+  { name:'星湾',   min:7,   rot:0,    starR:2.8, lineA:0.25, aurora:false },
+  { name:'星河',   min:14,  rot:0,    starR:3.2, lineA:0.40, aurora:false },
+  { name:'星海',   min:30,  rot:0.15, starR:3.5, lineA:0.50, aurora:false },
+  { name:'星穹',   min:60,  rot:0.30, starR:3.8, lineA:0.60, aurora:false },
+  { name:'星永恒', min:100, rot:0.50, starR:4.0, lineA:0.70, aurora:true }
+];
+let starChart = null;
+
+function starHash(s) {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) { h = ((h << 5) - h) + s.charCodeAt(i); h |= 0; }
+  return Math.abs(h);
+}
+
+function starPhase(streak) {
+  let p = STAR_PHASES[0];
+  for (const sp of STAR_PHASES) { if (streak >= sp.min) p = sp; }
+  return p;
+}
+
+function starDefault() {
+  return { v:1, unlocked:false, cons:{}, dimStars:0, phase:'星芽', lastUpgrade:0 };
+}
+
+function starLoad() {
+  try {
+    const r = localStorage.getItem(STARCHART_KEY);
+    if (r) { const d = JSON.parse(r); if (d && d.v === 1) return d; }
+  } catch (e) {}
+  return starDefault();
+}
+
+function starSave() {
+  try { localStorage.setItem(STARCHART_KEY, JSON.stringify(starChart)); } catch (e) {}
+}
+
+function starReset() {
+  starChart = starDefault();
+  starSave();
+}
+
+function starPos(dateKey, idx, total, W, H) {
+  const s = starHash(dateKey);
+  const cx = ((s * 3 + 7) % 991) / 991 * W * 0.78 + W * 0.11;
+  const cy = ((s * 7 + 13) % 991) / 991 * H * 0.66 + H * 0.17;
+  if (total <= 1) return { x: cx, y: cy };
+  const a = (Math.PI * 2 * idx) / total + (s % 100) * 0.01;
+  const r = Math.min(W, H) * 0.065;
+  return { x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r * 0.6 };
+}
+
+function starDraw(canvas, phase, cons, fullscreen) {
+  const dpr = Math.max(window.devicePixelRatio || 1, 2);
+  const W = fullscreen ? window.innerWidth : canvas.clientWidth;
+  const H = fullscreen ? window.innerHeight : canvas.clientHeight;
+  if (!W || !H) return;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  // Background
+  const bg = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, Math.max(W, H) * 0.7);
+  bg.addColorStop(0, '#141830');
+  bg.addColorStop(1, '#0a0d1a');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+
+  const dates = Object.keys(cons).sort();
+  if (!dates.length) return;
+
+  // Aurora glow for 星永恒
+  if (phase.aurora && fullscreen) {
+    for (let i = 0; i < 3; i++) {
+      const ag = ctx.createRadialGradient(W * (0.2 + i * 0.3), H * (0.2 + i * 0.25), 0, W * (0.2 + i * 0.3), H * (0.2 + i * 0.25), W * 0.5);
+      ag.addColorStop(0, 'rgba(46,232,184,0.06)');
+      ag.addColorStop(0.5, 'rgba(136,68,204,0.03)');
+      ag.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = ag;
+      ctx.fillRect(0, 0, W, H);
+    }
+  }
+
+  // Constellation lines
+  if (phase.lineA > 0) {
+    ctx.strokeStyle = 'rgba(240,216,144,' + phase.lineA + ')';
+    ctx.lineWidth = fullscreen ? 1.2 : 0.6;
+    for (const dk of dates) {
+      const c = cons[dk];
+      if (c.stars < 2) continue;
+      const pts = [];
+      for (let i = 0; i < c.stars; i++) pts.push(starPos(dk, i, c.stars, W, H));
+      ctx.beginPath();
+      ctx.moveTo(pts[0].x, pts[0].y);
+      for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
+      ctx.closePath();
+      ctx.stroke();
+    }
+  }
+
+  // Stars
+  for (const dk of dates) {
+    const c = cons[dk];
+    for (let i = 0; i < c.stars; i++) {
+      const p = starPos(dk, i, c.stars, W, H);
+      const dim = c.dim || false;
+      const alpha = dim ? 0.25 : 0.9;
+      const r = phase.starR * (fullscreen ? 2.2 : 1);
+
+      // Glow
+      const gl = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r * 3.5);
+      gl.addColorStop(0, 'rgba(240,216,144,' + alpha + ')');
+      gl.addColorStop(0.3, 'rgba(240,216,144,' + (alpha * 0.35) + ')');
+      gl.addColorStop(1, 'rgba(240,216,144,0)');
+      ctx.fillStyle = gl;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, r * 3.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Core
+      ctx.fillStyle = 'rgba(255,242,210,' + alpha + ')';
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, r * 0.6, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Cross sparkle
+      ctx.strokeStyle = 'rgba(240,216,144,' + (alpha * 0.45) + ')';
+      ctx.lineWidth = 0.5;
+      ctx.beginPath();
+      ctx.moveTo(p.x - r * 1.4, p.y);
+      ctx.lineTo(p.x + r * 1.4, p.y);
+      ctx.moveTo(p.x, p.y - r * 1.4);
+      ctx.lineTo(p.x, p.y + r * 1.4);
+      ctx.stroke();
+    }
+  }
+}
+
+function starRenderSidebar() {
+  const sb = document.getElementById('starSidebar');
+  if (!sb || !starChart) return;
+  const dates = Object.keys(starChart.cons).sort();
+  const todayKey = getDateKey(new Date());
+  const todayC = starChart.cons[todayKey];
+
+  let html = '<div class="star-today-label">今日星座</div>';
+  if (todayC) {
+    html += '<div class="star-today-constellation">';
+    for (let i = 0; i < todayC.stars; i++) {
+      html += '<span class="star-today-dot"></span>';
+    }
+    html += '<span style="font-size:10px;color:var(--faded-ink);margin-left:4px;">已完成 · ' + todayC.stars + ' 星</span></div>';
+  } else {
+    html += '<div class="star-today-constellation"><span style="font-size:10px;color:var(--ink-faint);">今日尚未完成全部复习</span></div>';
+  }
+
+  html += '<div class="star-chart-log-title">最近 7 天</div>';
+  for (let i = 0; i < 7; i++) {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    d.setDate(d.getDate() - i);
+    const dk = getDateKey(d);
+    const c = starChart.cons[dk];
+    const label = (d.getMonth() + 1) + '/' + d.getDate();
+    html += '<div class="star-recent-row"><span style="width:32px;">' + label + '</span><span class="star-recent-dots">';
+    if (c) {
+      for (let j = 0; j < c.stars; j++) {
+        html += '<span class="star-recent-dot"></span>';
+      }
+    } else {
+      html += '<span style="font-size:9px;color:var(--ink-faint);">—</span>';
+    }
+    html += '</span></div>';
+  }
+  sb.innerHTML = html;
+}
+
+function starUpdate() {
+  if (!currentConfig || !starChart) return;
+  var card = document.getElementById('starChartCard');
+  if (!card) return;
+  var sched = generateSchedule(currentConfig.startDate, currentConfig.itemsPerDay, currentConfig.totalDays);
+  var streak = computeStreak(sched, currentCompletions);
+  var phase = starPhase(streak);
+  var today = new Date(); today.setHours(0, 0, 0, 0);
+
+  // Auto-create constellations for all days up to today
+  for (var ri = 0; ri < sched.length; ri++) {
+    var row = sched[ri];
+    var rowDate = new Date(row.date); rowDate.setHours(0, 0, 0, 0);
+    if (rowDate > today) break;
+    var dk = getDateKey(rowDate);
+    if (starChart.cons[dk]) continue;
+
+    var totalS = row.newItems.length;
+    for (var ii = 0; ii < INTERVALS.length; ii++) {
+      totalS += row.reviews[INTERVALS[ii]].length;
+    }
+    if (totalS > 0) {
+      starChart.cons[dk] = { stars: totalS };
+      starChart.unlocked = true;
+    }
+  }
+
+  if (!starChart.unlocked) {
+    card.classList.remove('unlocked');
+    return;
+  }
+  card.classList.add('unlocked');
+  starSave();
+
+  document.getElementById('starPhaseName').textContent = phase.name;
+  var totalStars = 0;
+  var consKeys = Object.keys(starChart.cons);
+  for (var ki = 0; ki < consKeys.length; ki++) {
+    totalStars += starChart.cons[consKeys[ki]].stars;
+  }
+  document.getElementById('starTotalCount').textContent = totalStars;
+
+  var canvas = document.getElementById('starCanvas');
+  starDraw(canvas, phase, starChart.cons, false);
+  starRenderSidebar();
+
+  // Phase upgrade
+  if (phase.name !== starChart.phase) {
+    starChart.phase = phase.name;
+    starChart.lastUpgrade = Date.now();
+    starSave();
+    var msg = document.getElementById('starPhaseMsg');
+    if (msg) {
+      msg.textContent = '✦ 星图进阶 · ' + phase.name + ' ✦';
+      msg.style.display = '';
+      msg.classList.remove('phase-upgrade');
+      void msg.offsetWidth;
+      msg.classList.add('phase-upgrade');
+    }
+  }
+}
+
+// Called when all reviews are completed for today — triggers visual effects
+function starOnComplete() {
+  if (!currentConfig || !starChart) return;
+
+  // Re-light any previously dimmed constellations
+  var consKeys = Object.keys(starChart.cons);
+  for (var ki = 0; ki < consKeys.length; ki++) {
+    if (starChart.cons[consKeys[ki]].dim) {
+      starChart.cons[consKeys[ki]].dim = false;
+    }
+  }
+  starChart.dimStars = 0;
+  starSave();
+  starUpdate();
+
+  // Canvas glow pulse
+  setTimeout(function() {
+    var wrap = document.getElementById('starCanvasWrap');
+    if (!wrap) return;
+    wrap.style.boxShadow = '0 0 40px rgba(240,216,144,0.5)';
+    setTimeout(function() {
+      wrap.style.boxShadow = 'inset 0 0 30px rgba(10,13,26,0.6)';
+    }, 800);
+  }, 1200);
+}
+
+// ── Fullscreen Star Chart ────────────────────────────────────
+
+var starRotRAF = null;
+var starRotAngle = 0;
+
+function starOpenFullscreen() {
+  var overlay = document.getElementById('starFullscreen');
+  if (!overlay) return;
+  overlay.classList.add('open');
+  var canvas = document.getElementById('starFullscreenCanvas');
+  var sched = generateSchedule(currentConfig.startDate, currentConfig.itemsPerDay, currentConfig.totalDays);
+  var streak = computeStreak(sched, currentCompletions);
+  var phase = starPhase(streak);
+  document.getElementById('starFullscreenPhase').textContent = phase.name;
+  starDraw(canvas, phase, starChart.cons, true);
+  document.body.style.overflow = 'hidden';
+
+  if (phase.rot > 0) starStartRotate(canvas, phase);
+}
+
+function starCloseFullscreen() {
+  var overlay = document.getElementById('starFullscreen');
+  if (!overlay) return;
+  overlay.classList.remove('open');
+  document.body.style.overflow = '';
+  starStopRotate();
+}
+
+function starStartRotate(canvas, phase) {
+  starStopRotate();
+  function tick() {
+    starRotAngle += phase.rot / 60;
+    var sched = generateSchedule(currentConfig.startDate, currentConfig.itemsPerDay, currentConfig.totalDays);
+    var streak = computeStreak(sched, currentCompletions);
+    var p = starPhase(streak);
+    var dpr = Math.max(window.devicePixelRatio || 1, 2);
+    var W = window.innerWidth;
+    var H = window.innerHeight;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    var ctx = canvas.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.save();
+    ctx.translate(W / 2, H / 2);
+    ctx.rotate(starRotAngle * Math.PI / 180);
+    ctx.translate(-W / 2, -H / 2);
+    starDraw(canvas, p, starChart.cons, true);
+    ctx.restore();
+    starRotRAF = requestAnimationFrame(tick);
+  }
+  starRotRAF = requestAnimationFrame(tick);
+}
+
+function starStopRotate() {
+  if (starRotRAF) { cancelAnimationFrame(starRotRAF); starRotRAF = null; }
+}
 
 function parseLocalDate(str) {
   const parts = str.split('-').map(Number);
@@ -3372,6 +3812,8 @@ function updateStats(schedule, completions) {
     void badge.offsetWidth;
     badge.classList.add('pulse');
   }
+
+  starUpdate();
 }
 
 let currentConfig = null;
@@ -3553,6 +3995,7 @@ function onCheckbox(e) {
       stopTimer(sec);
     }
     fireStamp();
+    starOnComplete();
   }
 }
 
@@ -3823,6 +4266,9 @@ function onToggle() {
 function onClear() {
   if (confirm('确定要清空所有复习完成标记吗？此操作不可撤销。')) {
     currentCompletions = {};
+    starReset();
+    var sc = document.getElementById('starChartCard');
+    if (sc) sc.classList.remove('unlocked');
     saveState(currentConfig, currentCompletions, currentContents);
     const s = generateSchedule(currentConfig.startDate, currentConfig.itemsPerDay, currentConfig.totalDays);
     renderTable(s, currentCompletions, currentContents);
@@ -3956,6 +4402,11 @@ function init() {
     renderContentPanel(schedule, currentContents);
     updateStats(schedule, currentCompletions);
     showAfterGenerate();
+    // Load and render star chart
+    starChart = starLoad();
+    starUpdate();
+  } else {
+    starChart = starLoad();
   }
   document.getElementById('btnGenerate').addEventListener('click', onGenerate);
   document.getElementById('btnToggle').addEventListener('click', onToggle);
@@ -4066,6 +4517,16 @@ function init() {
   }
   document.querySelectorAll('.field input').forEach(inp => {
     inp.addEventListener('keydown', e => { if (e.key === 'Enter') onGenerate(); });
+  });
+
+  // Star chart event listeners
+  document.getElementById('starCanvasWrap').addEventListener('click', starOpenFullscreen);
+  document.getElementById('starFullscreenClose').addEventListener('click', starCloseFullscreen);
+  document.getElementById('starFullscreen').addEventListener('click', function(e) {
+    if (e.target === this) starCloseFullscreen();
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') starCloseFullscreen();
   });
 }
 
