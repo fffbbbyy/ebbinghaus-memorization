@@ -1787,9 +1787,50 @@ body::after {
   font-family: "JetBrains Mono", monospace;
   font-size: 11px;
   color: var(--faded-ink);
-  min-width: 44px;
+  min-width: 60px;
   text-align: center;
   font-variant-numeric: tabular-nums;
+}
+
+/* Thermometer seek bar */
+.local-seek-wrap {
+  flex: 1;
+  min-width: 80px;
+  height: 8px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.5) 0%, rgba(230,207,154,0.4) 50%, rgba(200,180,140,0.3) 100%);
+  border-radius: 4px;
+  border: 1px solid rgba(125,94,16,0.3);
+  overflow: visible;
+  position: relative;
+  cursor: pointer;
+  box-shadow: inset 0 1px 3px rgba(17,17,34,0.1);
+}
+.local-seek-wrap::before {
+  content: '';
+  position: absolute; left: -3px; top: -3px;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #e84040 0%, #b02020 60%, #801515 100%);
+  border: 1.5px solid rgba(125,94,16,0.5);
+  box-shadow: 0 1px 3px rgba(17,17,34,0.2), inset 0 1px 1px rgba(255,255,255,0.3);
+  z-index: 2;
+}
+.local-seek-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #b02020 0%, #d03030 40%, #e84040 100%);
+  border-radius: 3px;
+  transition: width 0.15s linear;
+  margin-left: 5px;
+  position: relative;
+}
+.local-seek-fill::after {
+  content: '';
+  position: absolute; right: 2px; top: 1px; bottom: 1px;
+  width: 2px;
+  background: rgba(255,255,255,0.4);
+  border-radius: 1px;
 }
 
 /* ── Reduced Motion — Accessibility ────────────────────── */
@@ -1929,8 +1970,11 @@ body::after {
           <button class="local-ctrl-btn" id="btnPrev" title="上一首">&#x23EE;</button>
           <button class="local-ctrl-btn local-btn-play" id="btnPlayPause" title="播放/暂停">&#x25B6;</button>
           <button class="local-ctrl-btn" id="btnNext" title="下一首">&#x23ED;</button>
+          <div class="local-seek-wrap" id="localSeekWrap">
+            <div class="local-seek-fill" id="localSeekFill"></div>
+          </div>
           <span class="local-time" id="localTime">--:--</span>
-          <div class="music-row" style="margin:0;flex:1;max-width:140px;">
+          <div class="music-row" style="margin:0;flex:0 0 auto;max-width:120px;">
             <label style="min-width:0;font-size:9px;">🔊</label>
             <input type="range" id="localVolume" class="music-slider" min="0" max="100" value="70">
           </div>
@@ -2433,13 +2477,28 @@ function updateLocalNowPlaying() {
 function updateLocalTime() {
   var el = document.getElementById('localTime');
   var audio = document.getElementById('musicAudio');
+  var fill = document.getElementById('localSeekFill');
   if (!el || !audio || !audio.duration || isNaN(audio.duration)) {
-    if (el) el.textContent = '--:--';
+    if (el) el.textContent = '--:-- / --:--';
+    if (fill) fill.style.width = '0%';
     return;
   }
-  var m = Math.floor(audio.currentTime / 60);
-  var s = Math.floor(audio.currentTime % 60);
-  el.textContent = m + ':' + String(s).padStart(2, '0');
+  var cm = Math.floor(audio.currentTime / 60);
+  var cs = Math.floor(audio.currentTime % 60);
+  var dm = Math.floor(audio.duration / 60);
+  var ds = Math.floor(audio.duration % 60);
+  el.textContent = cm + ':' + String(cs).padStart(2, '0') + ' / ' + dm + ':' + String(ds).padStart(2, '0');
+  if (fill) fill.style.width = (audio.currentTime / audio.duration * 100) + '%';
+}
+
+function seekAudio(e) {
+  var wrap = document.getElementById('localSeekWrap');
+  var audio = document.getElementById('musicAudio');
+  if (!audio || !audio.duration || isNaN(audio.duration)) return;
+  var rect = wrap.getBoundingClientRect();
+  var pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+  audio.currentTime = pct * audio.duration;
+  updateLocalTime();
 }
 
 function renderLocalPlaylist() {
@@ -3663,6 +3722,20 @@ function init() {
   document.getElementById('localVolume').addEventListener('input', function() {
     document.getElementById('musicAudio').volume = parseInt(this.value) / 100;
   });
+  // Seek bar — click to seek
+  var seekWrap = document.getElementById('localSeekWrap');
+  seekWrap.addEventListener('click', seekAudio);
+  // Seek bar — drag to seek
+  var dragging = false;
+  seekWrap.addEventListener('mousedown', function(e) {
+    dragging = true;
+    seekAudio(e);
+  });
+  document.addEventListener('mousemove', function(e) {
+    if (!dragging) return;
+    seekAudio(e);
+  });
+  document.addEventListener('mouseup', function() { dragging = false; });
   // Restore state
   restoreMusicState();
   restoreLocalFiles();
